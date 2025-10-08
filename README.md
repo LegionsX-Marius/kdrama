@@ -4,7 +4,7 @@ Site web modern pentru vizionarea și gestionarea serialelor K-Drama (seriale co
 
 ## 🌟 Demo Live
 
-👉 **[Vezi Demo](https://your-username.github.io/kdrama-hub)**
+👉 **[Vezi Demo](https://LegionsX-Marius.github.io/kdrama-hub)**
 
 ## ✨ Funcționalități Complete
 
@@ -24,7 +24,7 @@ Site web modern pentru vizionarea și gestionarea serialelor K-Drama (seriale co
 
 ### 1. Clonează repository-ul
 ```bash
-git clone https://github.com/your-username/kdrama-hub.git
+git clone https://github.com/LegionsX-Marius/kdrama-hub.git
 cd kdrama-hub
 ```
 
@@ -247,9 +247,8 @@ Contribuțiile sunt binevenite!
 
 ## 📧 Contact & Support
 
-- **GitHub**: [@your-username](https://github.com/your-username)
-- **Email**: your-email@example.com
-- **Issues**: [Report a bug](https://github.com/your-username/kdrama-hub/issues)
+- **GitHub**: [@LegionsX-Marius](https://github.com/LegionsX-Marius)
+- **Email**: mariusbun@gmail.com
 
 ## 🙏 Credits
 
@@ -260,13 +259,13 @@ Contribuțiile sunt binevenite!
 ## 📸 Screenshots
 
 ### Homepage
-![Homepage](https://via.placeholder.com/800x400?text=Homepage+Screenshot)
+![Homepage](img/homepage.png)
 
 ### Serial Page
-![Serial Page](https://via.placeholder.com/800x400?text=Serial+Page+Screenshot)
+![Serial Page](img/serialpage.png)
 
 ### Episode Player
-![Episode Player](https://via.placeholder.com/800x400?text=Episode+Player+Screenshot)
+![Episode Player](img/episodepage.png)
 
 ---
 
