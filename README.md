@@ -4,7 +4,7 @@ Site web modern pentru vizionarea și gestionarea serialelor K-Drama (seriale co
 
 ## 🌟 Demo Live
 
-👉 **[Vezi Demo](https://LegionsX-Marius.github.io/kdrama-hub)**
+👉 **[Vezi Demo](https://LegionsX-Marius.github.io/kdrama)**
 
 ## ✨ Funcționalități Complete
 
@@ -270,5 +270,6 @@ Contribuțiile sunt binevenite!
 ---
 
 ⭐ **Dacă îți place proiectul, lasă o stea pe GitHub!**
+
 
 Made with ❤️ for K-Drama fans worldwide 🌍
