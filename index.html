@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="KDrama Hub - Cele mai bune seriale coreene online. Descoperă, urmărește și evaluează serialele tale K-Drama favorite.">
+    <meta name="keywords" content="kdrama, seriale coreene, k-drama online, drama coreeană">
+    <title>K-Drama - Seriale Online</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #fff;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            color: #333;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        body.light-mode header {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(74, 144, 226, 0.3);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            animation: rotate3d 3s ease-in-out infinite;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        @keyframes rotate3d {
+            0%, 100% { transform: rotateY(0deg) rotateX(0deg); }
+            25% { transform: rotateY(180deg) rotateX(0deg); }
+            50% { transform: rotateY(180deg) rotateX(180deg); }
+            75% { transform: rotateY(0deg) rotateX(180deg); }
+        }
+
+        .site-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #4A90E2, #64B5F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(74, 144, 226, 0.5);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 15px;
+            border-radius: 25px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        body.light-mode .search-container {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .search-container:focus-within {
+            border-color: #4A90E2;
+            box-shadow: 0 0 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            outline: none;
+            width: 250px;
+            font-size: 14px;
+        }
+
+        body.light-mode .search-input {
+            color: #333;
+        }
+
+        .search-input::placeholder {
+            color: #888;
+        }
+
+        .search-icon {
+            color: #4A90E2;
+            font-size: 18px;
+        }
+
+        .theme-toggle, .favorites-btn {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(53, 122, 189, 0.2));
+            border: 2px solid #4A90E2;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        body.light-mode .theme-toggle,
+        body.light-mode .favorites-btn {
+            color: #333;
+        }
+
+        .theme-toggle:hover, .favorites-btn:hover {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        .favorites-count {
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .category-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(53, 122, 189, 0.2));
+            border: 2px solid rgba(74, 144, 226, 0.5);
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        body.light-mode .filter-btn {
+            color: #333;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            border-color: #4A90E2;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        .category-section {
+            margin-bottom: 50px;
+        }
+
+        .category-title {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #4A90E2;
+            border-left: 4px solid #4A90E2;
+            padding-left: 15px;
+        }
+
+        .series-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1400px) {
+            .series-grid { grid-template-columns: repeat(5, 1fr); }
+        }
+
+        @media (max-width: 1000px) {
+            .series-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .series-grid { grid-template-columns: repeat(3, 1fr); }
+            .site-title {
+                font-size: 24px;
+                position: relative;
+                left: 0;
+                transform: none;
+            }
+            .search-input { width: 150px; }
+            .header-content { justify-content: center; }
+        }
+
+        @media (max-width: 500px) {
+            .series-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .series-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        body.light-mode .series-card {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .series-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
+            border-color: rgba(74, 144, 226, 0.5);
+        }
+
+        .favorite-icon {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+
+        .favorite-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .favorite-icon.favorited {
+            color: #ff4444;
+        }
+
+        .series-poster {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .series-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .series-card:hover .series-poster img {
+            transform: scale(1.1);
+        }
+
+        .series-poster::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 100%);
+            z-index: 1;
+        }
+
+        .series-rating {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .series-info {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-mode .series-info {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .series-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #fff;
+        }
+
+        body.light-mode .series-title {
+            color: #333;
+        }
+
+        .series-year {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        body.light-mode .series-year {
+            color: #666;
+        }
+
+        .series-episodes {
+            font-size: 12px;
+            color: #4A90E2;
+            margin-top: 5px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+            font-size: 18px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .placeholder-emoji {
+            font-size: 48px;
+            color: rgba(255, 255, 255, 0.3);
+            z-index: 0;
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            font-weight: bold;
+            font-size: 16px;
+            opacity: 0;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.add {
+            background: linear-gradient(135deg, #56ab2f, #a8e063);
+        }
+
+        .notification.remove {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+        }
+
+        @media (max-width: 768px) {
+            .notification {
+                right: 10px;
+                left: 10px;
+                text-align: center;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo">
+    <img src="img/logo.png" alt="KDrama Hub" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+            </div>
+            <h1 class="site-title">K-Drama Seriale</h1>
+            <div class="header-right">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Caută seriale...">
+                </div>
+                <button class="favorites-btn" onclick="showFavorites()">
+                    ❤️ Favorite
+                    <span class="favorites-count" id="favCount">0</span>
+                </button>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <span id="themeIcon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="category-filter">
+            <button class="filter-btn active" data-category="all">🎬 Toate</button>
+            <button class="filter-btn" data-category="curse">🏎 Race</button>
+            <button class="filter-btn" data-category="action">⚔️ Action</button>
+            <button class="filter-btn" data-category="romance">💕 Romance</button>
+            <button class="filter-btn" data-category="thriller">🔍 Thriller</button>
+            <button class="filter-btn" data-category="comedy">😂 Comedy</button>
+            <button class="filter-btn" data-category="fantasy">✨ Fantasy</button>
+        </div>
+
+        <section class="category-section" data-category="curse">
+            <h2 class="category-title">🏎 Race</h2>
+            <div class="series-grid" id="raceGrid"></div>
+        </section>
+        
+        <section class="category-section" data-category="action">
+            <h2 class="category-title">⚔️ Action</h2>
+            <div class="series-grid" id="actionGrid"></div>
+        </section>
+
+        <section class="category-section" data-category="romance">
+            <h2 class="category-title">💕 Romance</h2>
+            <div class="series-grid" id="romanceGrid"></div>
+        </section>
+
+        <section class="category-section" data-category="thriller">
+            <h2 class="category-title">🔍 Thriller</h2>
+            <div class="series-grid" id="thrillerGrid"></div>
+        </section>
+
+        <div class="no-results hidden" id="noResults">
+            <p>Nu s-au găsit seriale pentru căutarea ta 😔</p>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        let favorites = JSON.parse(localStorage.getItem('kdrama_favorites') || '[]');
+        updateFavCount();
+
+        const savedTheme = localStorage.getItem('kdrama_theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            document.getElementById('themeIcon').textContent = '☀️';
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            document.getElementById('themeIcon').textContent = isLight ? '☀️' : '🌙';
+            localStorage.setItem('kdrama_theme', isLight ? 'light' : 'dark');
+        }
+
+        function toggleFavorite(seriesId, event) {
+            event.stopPropagation();
+            const index = favorites.indexOf(seriesId);
+            const series = seriesData[seriesId];
+            
+            if (index > -1) {
+                favorites.splice(index, 1);
+                showNotification(`❌ "${series.title}" a fost șters din favorite!`, 'remove');
+            } else {
+                favorites.push(seriesId);
+                showNotification(`❤️ "${series.title}" a fost adăugat la favorite!`, 'add');
+            }
+            localStorage.setItem('kdrama_favorites', JSON.stringify(favorites));
+            updateFavCount();
+            renderAllSeries();
+        }
+
+        function showNotification(message, type) {
+            const existingNotif = document.querySelector('.notification');
+            if (existingNotif) {
+                existingNotif.remove();
+            }
+
+            const notification = document.createElement('div');
+            notification.className = 'notification ' + type;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        function updateFavCount() {
+            document.getElementById('favCount').textContent = favorites.length;
+        }
+
+        function showFavorites() {
+            if (favorites.length === 0) {
+                alert('Nu ai seriale favorite încă!');
+                return;
+            }
+            
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => btn.classList.remove('active'));
+            
+            document.querySelectorAll('.series-card').forEach(card => {
+                const seriesId = card.getAttribute('data-series-id');
+                card.classList.toggle('hidden', !favorites.includes(seriesId));
+            });
+
+            document.querySelectorAll('.category-section').forEach(section => {
+                const visibleCards = section.querySelectorAll('.series-card:not(.hidden)');
+                section.classList.toggle('hidden', visibleCards.length === 0);
+            });
+        }
+
+        function renderAllSeries() {
+            const grids = {
+                action: document.getElementById('actionGrid'),
+                romance: document.getElementById('romanceGrid'),
+                thriller: document.getElementById('thrillerGrid'),
+                race: document.getElementById('raceGrid')
+            };
+
+            Object.values(grids).forEach(grid => grid.innerHTML = '');
+
+            Object.entries(seriesData).forEach(([id, series]) => {
+                const isFavorited = favorites.includes(id);
+                const imageSrc = series.image || 'img/placeholder.jpg';
+                
+                const card = `
+                    <div class="series-card" onclick="window.location.href='series.html?id=${id}'" data-series-id="${id}" data-title="${series.title.toLowerCase()}">
+                        <div class="favorite-icon ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite('${id}', event)">
+                            ${isFavorited ? '❤️' : '🤍'}
+                        </div>
+                        <div class="series-poster">
+                            <img src="${imageSrc}" alt="${series.title}" onerror="this.parentElement.innerHTML='<span class=\\'placeholder-emoji\\'>${series.icon || '🎬'}</span><div class=\\'series-rating\\' style=\\'position:absolute; top:10px; right:10px; z-index:2;\\'>⭐ ${series.rating}</div>'">
+                            <div class="series-rating">⭐ ${series.rating}</div>
+                        </div>
+                        <div class="series-info">
+                            <div class="series-title">${series.title}</div>
+                            <div class="series-year">${series.year}</div>
+                            <div class="series-episodes">${series.episodes.length} episoade</div>
+                        </div>
+                    </div>
+                `;
+
+                if (grids[series.category]) {
+                    grids[series.category].innerHTML += card;
+                }
+            });
+        }
+
+        renderAllSeries();
+
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            let hasResults = false;
+
+            document.querySelectorAll('.series-card').forEach(card => {
+                const title = card.getAttribute('data-title') || '';
+                const matches = title.includes(searchTerm);
+                card.classList.toggle('hidden', !matches);
+                if (matches) hasResults = true;
+            });
+
+            document.querySelectorAll('.category-section').forEach(section => {
+                const visibleCards = section.querySelectorAll('.series-card:not(.hidden)');
+                section.classList.toggle('hidden', visibleCards.length === 0);
+            });
+
+            document.getElementById('noResults').classList.toggle('hidden', hasResults || searchTerm === '');
+        });
+
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const category = btn.getAttribute('data-category');
+                
+                document.querySelectorAll('.category-section').forEach(section => {
+                    section.classList.toggle('hidden', category !== 'all' && section.getAttribute('data-category') !== category);
+                });
+
+                searchInput.value = '';
+                document.querySelectorAll('.series-card').forEach(card => card.classList.remove('hidden'));
+                document.getElementById('noResults').classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

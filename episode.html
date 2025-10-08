@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Vizionează episoadele tale favorite de K-Drama">
+    <title>Vizionează Episod - KDrama Hub</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #fff;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            color: #333;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        body.light-mode header {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(74, 144, 226, 0.3);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            animation: rotate3d 3s ease-in-out infinite;
+        }
+
+        @keyframes rotate3d {
+            0%, 100% { transform: rotateY(0deg) rotateX(0deg); }
+            25% { transform: rotateY(180deg) rotateX(0deg); }
+            50% { transform: rotateY(180deg) rotateX(180deg); }
+            75% { transform: rotateY(0deg) rotateX(180deg); }
+        }
+
+        .site-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #4A90E2, #64B5F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(53, 122, 189, 0.2));
+            border: 2px solid #4A90E2;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        body.light-mode .back-btn {
+            color: #333;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .video-container {
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+        }
+
+        .video-player {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-player img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(10px) brightness(0.5);
+        }
+
+        .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 2;
+        }
+
+        .play-button {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.5);
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(74, 144, 226, 0.7);
+        }
+
+        .video-placeholder-text {
+            color: #fff;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .episode-info-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            margin-bottom: 30px;
+        }
+
+        body.light-mode .episode-info-section {
+            background: white;
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .episode-header {
+            margin-bottom: 20px;
+        }
+
+        .episode-title-main {
+            font-size: 32px;
+            color: #4A90E2;
+            margin-bottom: 10px;
+        }
+
+        .episode-subtitle {
+            font-size: 20px;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
+        body.light-mode .episode-subtitle {
+            color: #555;
+        }
+
+        .episode-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        body.light-mode .episode-meta {
+            color: #666;
+        }
+
+        .episode-description {
+            line-height: 1.8;
+            color: #ddd;
+            font-size: 16px;
+        }
+
+        body.light-mode .episode-description {
+            color: #555;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(53, 122, 189, 0.2));
+            border: 2px solid #4A90E2;
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        body.light-mode .nav-btn {
+            color: #333;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(74, 144, 226, 0.4);
+            color: #fff;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #555;
+        }
+
+        .episodes-list-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        body.light-mode .episodes-list-section {
+            background: white;
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #4A90E2;
+            border-left: 4px solid #4A90E2;
+            padding-left: 15px;
+        }
+
+        .episodes-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .episode-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        body.light-mode .episode-item {
+            background: rgba(0, 0, 0, 0.03);
+            border: 2px solid transparent;
+        }
+
+        .episode-item:hover {
+            background: rgba(74, 144, 226, 0.1);
+            border-color: #4A90E2;
+            transform: translateY(-2px);
+        }
+
+        .episode-item.active {
+            background: rgba(74, 144, 226, 0.2);
+            border-color: #4A90E2;
+        }
+
+        .episode-item-number {
+            font-size: 14px;
+            color: #4A90E2;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .episode-item-title {
+            font-size: 13px;
+            color: #ddd;
+        }
+
+        body.light-mode .episode-item-title {
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .navigation-buttons {
+                flex-direction: column;
+            }
+
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .site-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-container" onclick="window.location.href='index.html'">
+                <div class="logo">
+    <img src="img/logo.png" alt="KDrama Hub" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+            </div>
+            <h1 class="site-title">K-Drama Hub</h1>
+            <a href="#" class="back-btn" id="backToSeriesBtn">← Înapoi la Serial</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="video-container">
+            <div class="video-player" id="videoPlayer">
+                <div class="play-overlay">
+                    <div class="play-button">▶</div>
+                    <div class="video-placeholder-text">Apasă pentru a viziona<br><small>Adaugă link-ul video în data.js</small></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation-buttons">
+            <button class="nav-btn" id="prevBtn">
+                <span>◀</span>
+                <span>Episodul Anterior</span>
+            </button>
+            <button class="nav-btn" id="nextBtn">
+                <span>Episodul Următor</span>
+                <span>▶</span>
+            </button>
+        </div>
+
+        <div class="episode-info-section">
+            <div class="episode-header">
+                <h1 class="episode-title-main" id="episodeTitle">Episodul 1</h1>
+                <h2 class="episode-subtitle" id="seriesTitle">Vincenzo</h2>
+                <div class="episode-meta">
+                    <span>⏱️ <span id="episodeDuration">80 min</span></span>
+                    <span>📅 <span id="episodeDate">2021</span></span>
+                </div>
+            </div>
+            <p class="episode-description" id="episodeDescription">
+                Descrierea episodului va apărea aici...
+            </p>
+        </div>
+
+        <div class="episodes-list-section">
+            <h3 class="section-title">📺 Toate Episoadele</h3>
+            <div class="episodes-list" id="episodesList"></div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        const savedTheme = localStorage.getItem('kdrama_theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const seriesId = urlParams.get('series') || 'vincenzo';
+        const currentEp = parseInt(urlParams.get('ep')) || 1;
+        const series = seriesData[seriesId];
+
+        if (series && series.episodes[currentEp - 1]) {
+            const episode = series.episodes[currentEp - 1];
+
+            document.getElementById('seriesTitle').textContent = series.title;
+            document.getElementById('episodeTitle').textContent = `Episodul ${currentEp}`;
+            document.getElementById('episodeDuration').textContent = episode.duration;
+            document.getElementById('episodeDate').textContent = series.year;
+            document.getElementById('episodeDescription').textContent = episode.description;
+            document.getElementById('backToSeriesBtn').href = `series.html?id=${seriesId}`;
+            document.title = `${series.title} - Episodul ${currentEp} - KDrama Hub`;
+
+            const videoPlayer = document.getElementById('videoPlayer');
+            if (episode.videoUrl) {
+                videoPlayer.innerHTML = `
+                    <iframe 
+                        src="${episode.videoUrl}" 
+                        width="100%" 
+                        height="100%" 
+                        frameborder="0" 
+                        allowfullscreen
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        style="position: absolute; top: 0; left: 0;"
+                    ></iframe>
+                `;
+            } else if (series.image) {
+                videoPlayer.innerHTML = `
+                    <img src="${series.image}" alt="${series.title}">
+                    <div class="play-overlay">
+                        <div class="play-button">▶</div>
+                        <div class="video-placeholder-text">Apasă pentru a viziona<br><small>Adaugă link-ul video în data.js</small></div>
+                    </div>
+                `;
+            }
+
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (currentEp === 1) {
+                prevBtn.disabled = true;
+            } else {
+                prevBtn.onclick = () => {
+                    window.location.href = `episode.html?series=${seriesId}&ep=${currentEp - 1}`;
+                };
+            }
+
+            if (currentEp === series.episodes.length) {
+                nextBtn.disabled = true;
+            } else {
+                nextBtn.onclick = () => {
+                    window.location.href = `episode.html?series=${seriesId}&ep=${currentEp + 1}`;
+                };
+            }
+
+            const episodesList = document.getElementById('episodesList');
+            series.episodes.forEach((ep, index) => {
+                const episodeItem = document.createElement('div');
+                episodeItem.className = 'episode-item' + (index + 1 === currentEp ? ' active' : '');
+                episodeItem.onclick = () => {
+                    window.location.href = `episode.html?series=${seriesId}&ep=${index + 1}`;
+                };
+
+                episodeItem.innerHTML = `
+                    <div class="episode-item-number">Episodul ${index + 1}</div>
+                    <div class="episode-item-title">${ep.title}</div>
+                `;
+
+                episodesList.appendChild(episodeItem);
+            });
+
+        } else {
+            document.querySelector('.container').innerHTML = '<h2 style="text-align: center; margin-top: 100px;">Episodul nu a fost găsit!</h2>';
+        }
+    </script>
+</body>
+</html>
