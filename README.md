@@ -24,8 +24,8 @@ Site web modern pentru vizionarea și gestionarea serialelor K-Drama (seriale co
 
 ### 1. Clonează repository-ul
 ```bash
-git clone https://github.com/LegionsX-Marius/kdrama-hub.git
-cd kdrama-hub
+git clone https://github.com/LegionsX-Marius/kdrama.git
+cd kdrama
 ```
 
 ### 2. Creează folderul pentru imagini
@@ -52,7 +52,7 @@ npx http-server
 ## 📁 Structura Proiectului
 
 ```
-kdrama-hub/
+kdrama/
 ├── index.html          # Pagina principală
 ├── series.html         # Pagina serialului
 ├── episode.html        # Pagina episodului
@@ -159,9 +159,9 @@ linear-gradient(135deg, #ff416c, #ff4b2b)
 ```bash
 git init
 git add .
-git commit -m "KDrama Hub - Complete Website"
+git commit -m "K-Drama Hub- Complete Website"
 git branch -M main
-git remote add origin https://github.com/USERNAME/kdrama-hub.git
+git remote add origin https://github.com/USERNAME/kdrama.git
 git push -u origin main
 ```
 
@@ -171,7 +171,7 @@ git push -u origin main
 3. Branch: `main` → `/root`
 4. Click `Save`
 5. Așteaptă 2-3 minute
-6. Site live: `https://USERNAME.github.io/kdrama-hub/`
+6. Site live: `https://USERNAME.github.io/kdrama/`
 
 ## 🛠️ Tehnologii
 
@@ -273,3 +273,4 @@ Contribuțiile sunt binevenite!
 
 
 Made with ❤️ for K-Drama fans worldwide 🌍
+
