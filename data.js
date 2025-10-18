@@ -5,48 +5,108 @@
 
 const seriesData = {
     // ============================================
-    // SERIAL 1: VINCENZO
+    // SERIAL 1: ACE OF DESTINY
     // ============================================
-    vincenzo: {
-        title: "Vincenzo",
-        image: "img/vincenzo.jpg",
+    aceofdestiny: {
+        title: "Ace of Destiny",
+        image: "img/aceofdestiny.jpg",
         icon: "🎭",
-        year: "2021",
-        rating: "8.9",
-        genre: "Action, Comedy, Crime",
-        description: "Vincenzo Cassano este un consigliere al mafiei italiene care se întoarce în Coreea din cauza unui conflict intern. Acolo se întâlnește cu avocata Hong Cha-young și împreună luptă împotriva corupției folosind metode neconvenționale.",
+        year: "2025",
+        rating: "7.5",
+        genre: "Action, Comedy, Crime, Fantasy",
+        description: "Un clan secret de magie ii omoara parinti pentru ca sunt cei mai mari vrajitori si tricsteri in magie si cartile de joc!",
         category: "action",
         episodes: [
             {
-                title: "Întoarcerea în Coreea",
-                duration: "80 min",
-                description: "Vincenzo Cassano, consigliere al mafiei italiene, este forțat să se întoarcă în Coreea după ce șeful său este asasinat. Ajuns la Seoul, descoperă că clădirea Geumga Plaza, unde și-a ascuns o avere în aur, este în pericol.",
+                title: "Episodul 1",
+                duration: " min",
+                description: "Baiataul facem un show de magie in fata unui rau si cei care raspund de orindea si mentinera magiei sa nu fie vazuta de alti muritori, il aresteaza.",
                 videoUrl: ""
             },
             {
-                title: "Confruntarea cu Babel",
-                duration: "80 min",
-                description: "Vincenzo descoperă amploarea corupției din spatele Babel Group. Se aliază cu Hong Cha-young pentru a opri demolarea clădirii.",
+                title: "Episodul 2",
+                duration: " min",
+                description: "#",
                 videoUrl: ""
             },
             {
-                title: "Planul de răzbunare",
-                duration: "75 min",
-                description: "Vincenzo pune la cale un plan elaborat pentru a da jos pe șefii Babel Group folosind metodele sale din mafia italiană.",
+                title: "Episodul 3",
+                duration: " min",
+                description: "#",
                 videoUrl: ""
             },
             {
-                title: "Aliați neașteptați",
-                duration: "78 min",
-                description: "Locuitorii din Geumga Plaza formează o echipă neobișnuită pentru a lupta împotriva corporației Babel.",
+                title: "Episodul 4",
+                duration: " min",
+                description: "#",
                 videoUrl: ""
             },
             {
-                title: "Secretele trecutului",
-                duration: "80 min",
-                description: "Trecutul lui Vincenzo din Italia revine să-l bântuie în timp ce luptă împotriva Babel.",
+                title: "Episodul 5",
+                duration: " min",
+                description: "#",
                 videoUrl: ""
-            }
+            },
+            {
+                title: "Episodul 6",
+                duration: " min",
+                description: "#",
+                videoUrl: ""
+            },
+            {
+                title: "Episodul 7",
+                duration: " min",
+                description: "#",
+                videoUrl: ""
+            },
+            {
+                title: "Episodul 8",
+                duration: " min",
+                description: "#",
+                videoUrl: ""
+            },
+            {
+                title: "Episodul 9",
+                duration: " min",
+                description: "#",
+                videoUrl: ""
+            },
+            {
+                title: "Episodul 10",
+                duration: " min",
+                description: "#",
+                videoUrl: ""
+            },
+            {
+                title: "Episodul 11",
+                duration: " min",
+                description: "#",
+                videoUrl: ""
+            },
+            {
+                title: "Episodul 12",
+                duration: " min",
+                description: "#",
+                videoUrl: ""
+            },
+            {
+                title: "Episodul 13",
+                duration: " min",
+                description: "#",
+                videoUrl: ""
+            },
+            {
+                title: "Episodul 14",
+                duration: " min",
+                description: "#",
+                videoUrl: ""
+            },
+            {
+                title: "Episodul 15",
+                duration: " min",
+                description: "#",
+                videoUrl: ""
+            },
         ]
     },
 
@@ -488,4 +548,5 @@ function getAllSeries() {
 ✨ Gata! Serialul va apărea automat pe site!
 
 */
+
 
