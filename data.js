@@ -338,12 +338,6 @@ const seriesData = {
                 videoUrl: "https://drive.google.com/file/d/1dILSsSsuFVcNYczP0JZQhvL44RVcd3ew/preview"
             },
             {
-                title: "Drift King Episodul 4",
-                duration: "2:46 min",
-                description: "Prietenul sau se ia la intrecere cu cel mai bun sofer de curse de la Academia rivala",
-                videoUrl: "https://drive.google.com/file/d/1dILSsSsuFVcNYczP0JZQhvL44RVcd3ew/preview"
-            },
-            {
                 title: "Drift King Episodul 5",
                 duration: "2:04 min",
                 description: "#",
@@ -494,3 +488,4 @@ function getAllSeries() {
 ✨ Gata! Serialul va apărea automat pe site!
 
 */
+
