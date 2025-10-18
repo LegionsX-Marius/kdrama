@@ -337,6 +337,72 @@ const seriesData = {
                 description: "Prietenul sau se ia la intrecere cu cel mai bun sofer de curse de la Academia rivala",
                 videoUrl: "https://drive.google.com/file/d/1dILSsSsuFVcNYczP0JZQhvL44RVcd3ew/preview"
             },
+            {
+                title: "Drift King Episodul 4",
+                duration: "2:46 min",
+                description: "Prietenul sau se ia la intrecere cu cel mai bun sofer de curse de la Academia rivala",
+                videoUrl: "https://drive.google.com/file/d/1dILSsSsuFVcNYczP0JZQhvL44RVcd3ew/preview"
+            },
+            {
+                title: "Drift King Episodul 5",
+                duration: "2:04 min",
+                description: "#",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv060"
+            },
+            {
+                title: "Drift King Episodul 6",
+                duration: "2:39 min",
+                description: "#",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv37g"
+            },
+            {
+                title: "Drift King Episodul 7",
+                duration: "4:00 min",
+                description: "#",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv3n0"
+            },
+            {
+                title: "Drift King Episodul 8",
+                duration: "2:58 min",
+                description: "#",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv37i"
+            },
+            {
+                title: "Drift King Episodul 9",
+                duration: "2:24 min",
+                description: "#",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv37e"
+            },
+            {
+                title: "Drift King Episodul 10",
+                duration: "1:13 min",
+                description: "#",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv37k"
+            },
+            {
+                title: "Drift King Episodul 11",
+                duration: "2:34 min",
+                description: "#",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv37o"
+            },
+            {
+                title: "Drift King Episodul 12",
+                duration: "2:41 min",
+                description: "#",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv3my"
+            },
+            {
+                title: "Drift King Episodul 13",
+                duration: "1:39 min",
+                description: "#",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv3mw"
+            },
+            {
+                title: "Drift King Episodul 14",
+                duration: "1:42 min",
+                description: "#",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv37q"
+            },
         ]
     }
 
@@ -426,4 +492,5 @@ function getAllSeries() {
 - fantasy
 
 ✨ Gata! Serialul va apărea automat pe site!
+
 */
