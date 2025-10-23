@@ -42,6 +42,44 @@
             opacity: 0.9;
         }
 
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(74, 144, 226, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: rgba(74, 144, 226, 0.2);
+            border: 2px solid transparent;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: rgba(74, 144, 226, 0.3);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            border-color: #4A90E2;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         .card {
             background: rgba(255, 255, 255, 0.05);
             padding: 30px;
@@ -133,6 +171,10 @@
 
         .btn-secondary {
             background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f7971e, #ffd200);
         }
 
         .episode-builder {
@@ -277,6 +319,37 @@
             font-size: 28px;
         }
 
+        .episode-select-container {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .episode-list-manager {
+            max-height: 400px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .episode-list-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(74, 144, 226, 0.2);
+        }
+
+        .episode-list-item:hover {
+            background: rgba(74, 144, 226, 0.1);
+            border-color: #4A90E2;
+        }
+
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
@@ -289,6 +362,10 @@
             .series-item {
                 flex-direction: column;
                 gap: 15px;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
             }
         }
     </style>
@@ -322,94 +399,161 @@
 
             <div id="alertContainer"></div>
 
-            <div class="card">
-                <h2 class="card-title">➕ Adaugă Serial Nou</h2>
-                <form id="addSeriesForm">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>ID Serial (ex: squid_game):</label>
-                            <input type="text" id="seriesId" required pattern="[a-z_]+" title="Doar litere mici și underscore">
-                        </div>
-                        <div class="form-group">
-                            <label>Titlu:</label>
-                            <input type="text" id="seriesTitle" required>
-                        </div>
-                    </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Imagine (ex: img/serial.jpg):</label>
-                            <input type="text" id="seriesImage" placeholder="img/squid-game.jpg">
-                        </div>
-                        <div class="form-group">
-                            <label>Icon (Emoji):</label>
-                            <input type="text" id="seriesIcon" placeholder="🎯" maxlength="2">
-                        </div>
-                    </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>An:</label>
-                            <input type="text" id="seriesYear" required placeholder="2021">
-                        </div>
-                        <div class="form-group">
-                            <label>Rating (1-10):</label>
-                            <input type="text" id="seriesRating" required placeholder="9.0">
-                        </div>
-                    </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Gen:</label>
-                            <input type="text" id="seriesGenre" required placeholder="Action, Thriller">
-                        </div>
-                        <div class="form-group">
-                            <label>Categorie:</label>
-                            <select id="seriesCategory" required>
-                                <option value="action">Action</option>
-                                <option value="romance">Romance</option>
-                                <option value="thriller">Thriller</option>
-                                <option value="comedy">Comedy</option>
-                                <option value="fantasy">Fantasy</option>
-                                <option value="race">Race</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Descriere:</label>
-                        <textarea id="seriesDescription" required placeholder="Descriere completă a serialului..."></textarea>
-                    </div>
-
-                    <div class="episode-builder">
-                        <h3 style="color: #4A90E2; margin-bottom: 15px;">📺 Episoade</h3>
-                        <div id="episodesContainer"></div>
-                        <button type="button" class="btn btn-secondary" onclick="addEpisodeField()">
-                            ➕ Adaugă Episod
-                        </button>
-                    </div>
-
-                    <div style="margin-top: 30px; display: flex; gap: 15px;">
-                        <button type="submit" class="btn btn-success">💾 Salvează Serial</button>
-                        <button type="button" class="btn btn-danger" onclick="resetForm()">🔄 Resetează</button>
-                    </div>
-                </form>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('addSeries')">➕ Adaugă Serial</button>
+                <button class="tab-btn" onclick="switchTab('addEpisode')">📺 Adaugă Episod</button>
+                <button class="tab-btn" onclick="switchTab('manageSeries')">📋 Gestionează Seriale</button>
+                <button class="tab-btn" onclick="switchTab('codeView')">💻 Cod Generat</button>
             </div>
 
-            <div class="card">
-                <h2 class="card-title">📋 Seriale Existente</h2>
-                <div class="series-list" id="seriesList"></div>
-            </div>
+            <!-- TAB 1: Adaugă Serial Nou -->
+            <div id="addSeriesTab" class="tab-content active">
+                <div class="card">
+                    <h2 class="card-title">➕ Adaugă Serial Nou</h2>
+                    <form id="addSeriesForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>ID Serial (ex: squid_game):</label>
+                                <input type="text" id="seriesId" required pattern="[a-z_]+" title="Doar litere mici și underscore">
+                            </div>
+                            <div class="form-group">
+                                <label>Titlu:</label>
+                                <input type="text" id="seriesTitle" required>
+                            </div>
+                        </div>
 
-            <div class="card">
-                <h2 class="card-title">💻 Cod Generat</h2>
-                <p style="color: #aaa; margin-bottom: 15px;">Copiază codul de mai jos și lipește-l în data.js</p>
-                <div class="code-output">
-                    <pre id="codeOutput">// Codul va apărea aici după ce adaugi un serial</pre>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Imagine (ex: img/serial.jpg):</label>
+                                <input type="text" id="seriesImage" placeholder="img/squid-game.jpg">
+                            </div>
+                            <div class="form-group">
+                                <label>Icon (Emoji):</label>
+                                <input type="text" id="seriesIcon" placeholder="🎯" maxlength="2">
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>An:</label>
+                                <input type="text" id="seriesYear" required placeholder="2021">
+                            </div>
+                            <div class="form-group">
+                                <label>Rating (1-10):</label>
+                                <input type="text" id="seriesRating" required placeholder="9.0">
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Gen:</label>
+                                <input type="text" id="seriesGenre" required placeholder="Action, Thriller">
+                            </div>
+                            <div class="form-group">
+                                <label>Categorie:</label>
+                                <select id="seriesCategory" required>
+                                    <option value="action">Action</option>
+                                    <option value="romance">Romance</option>
+                                    <option value="thriller">Thriller</option>
+                                    <option value="comedy">Comedy</option>
+                                    <option value="fantasy">Fantasy</option>
+                                    <option value="race">Race</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Descriere:</label>
+                            <textarea id="seriesDescription" required placeholder="Descriere completă a serialului..."></textarea>
+                        </div>
+
+                        <div class="episode-builder">
+                            <h3 style="color: #4A90E2; margin-bottom: 15px;">📺 Episoade</h3>
+                            <div id="episodesContainer"></div>
+                            <button type="button" class="btn btn-secondary" onclick="addEpisodeField()">
+                                ➕ Adaugă Episod
+                            </button>
+                        </div>
+
+                        <div style="margin-top: 30px; display: flex; gap: 15px;">
+                            <button type="submit" class="btn btn-success">💾 Salvează Serial</button>
+                            <button type="button" class="btn btn-danger" onclick="resetForm()">🔄 Resetează</button>
+                        </div>
+                    </form>
                 </div>
-                <button class="btn" onclick="copyCode()" style="margin-top: 15px;">
-                    📋 Copiază Cod
-                </button>
+            </div>
+
+            <!-- TAB 2: Adaugă Episod la Serial Existent -->
+            <div id="addEpisodeTab" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">📺 Adaugă Episod la Serial Existent</h2>
+                    
+                    <div class="form-group">
+                        <label>Selectează Serialul:</label>
+                        <select id="selectSeriesForEpisode" onchange="loadSeriesEpisodes()" required>
+                            <option value="">-- Alege un serial --</option>
+                        </select>
+                    </div>
+
+                    <div id="episodeAddSection" style="display: none;">
+                        <div class="episode-select-container">
+                            <h3 style="color: #4A90E2; margin-bottom: 15px;">Episoade Existente</h3>
+                            <div class="episode-list-manager" id="existingEpisodesList"></div>
+                        </div>
+
+                        <form id="addEpisodeForm">
+                            <h3 style="color: #4A90E2; margin-bottom: 15px; margin-top: 30px;">➕ Adaugă Episod Nou</h3>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Titlu Episod:</label>
+                                    <input type="text" id="newEpisodeTitle" required placeholder="Episodul 1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Durată:</label>
+                                    <input type="text" id="newEpisodeDuration" required placeholder="60 min">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Descriere Episod:</label>
+                                <textarea id="newEpisodeDescription" required placeholder="Descriere episod..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>URL Video:</label>
+                                <input type="text" id="newEpisodeVideoUrl" placeholder="https://www.youtube.com/embed/VIDEO_ID">
+                            </div>
+
+                            <div style="margin-top: 20px; display: flex; gap: 15px;">
+                                <button type="submit" class="btn btn-success">✅ Adaugă Episod</button>
+                                <button type="button" class="btn btn-danger" onclick="resetEpisodeForm()">🔄 Resetează</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: Gestionează Seriale -->
+            <div id="manageSeriesTab" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">📋 Seriale Existente</h2>
+                    <div class="series-list" id="seriesList"></div>
+                </div>
+            </div>
+
+            <!-- TAB 4: Cod Generat -->
+            <div id="codeViewTab" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">💻 Cod Generat</h2>
+                    <p style="color: #aaa; margin-bottom: 15px;">Copiază codul de mai jos și lipește-l în data.js</p>
+                    <div class="code-output">
+                        <pre id="codeOutput">// Codul va apărea aici după ce adaugi un serial sau episod</pre>
+                    </div>
+                    <button class="btn" onclick="copyCode()" style="margin-top: 15px;">
+                        📋 Copiază Cod
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -418,6 +562,7 @@
     <script>
         let episodeCount = 0;
         let isAdminLoggedIn = false;
+        let generatedCode = '';
 
         function handleLogin(event) {
             event.preventDefault();
@@ -429,12 +574,21 @@
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 loadExistingSeries();
+                populateSeriesDropdown();
                 addEpisodeField();
                 addEpisodeField();
                 addEpisodeField();
             } else {
                 showAlert('Date de conectare incorecte!', 'danger');
             }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
         }
 
         function showAlert(message, type) {
@@ -470,6 +624,55 @@
                 addEpisodeField();
                 addEpisodeField();
             }
+        }
+
+        function resetEpisodeForm() {
+            document.getElementById('addEpisodeForm').reset();
+        }
+
+        function populateSeriesDropdown() {
+            const select = document.getElementById('selectSeriesForEpisode');
+            select.innerHTML = '<option value="">-- Alege un serial --</option>';
+            
+            Object.entries(seriesData).forEach(([id, series]) => {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = `${series.icon} ${series.title} (${series.episodes.length} episoade)`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadSeriesEpisodes() {
+            const seriesId = document.getElementById('selectSeriesForEpisode').value;
+            const section = document.getElementById('episodeAddSection');
+            
+            if (!seriesId) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'block';
+            const series = seriesData[seriesId];
+            const container = document.getElementById('existingEpisodesList');
+            container.innerHTML = '';
+
+            if (series.episodes.length === 0) {
+                container.innerHTML = '<p style="color: #aaa; text-align: center;">Niciun episod adăugat încă</p>';
+                return;
+            }
+
+            series.episodes.forEach((ep, index) => {
+                const item = document.createElement('div');
+                item.className = 'episode-list-item';
+                item.innerHTML = `
+                    <div>
+                        <strong style="color: #4A90E2;">Episodul ${index + 1}</strong>: ${ep.title}
+                        <br>
+                        <small style="color: #aaa;">⏱️ ${ep.duration} | ${ep.videoUrl ? '✅ Video disponibil' : '❌ Fără video'}</small>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
         }
 
         document.getElementById('addSeriesForm').addEventListener('submit', function(event) {
@@ -510,11 +713,34 @@
                 return;
             }
 
-            generateCode(seriesData);
+            generateSeriesCode(seriesData);
             showAlert(`Serial "${seriesData.title}" generat cu succes!`, 'success');
+            switchTab('codeView');
         });
 
-        function generateCode(data) {
+        document.getElementById('addEpisodeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const seriesId = document.getElementById('selectSeriesForEpisode').value;
+            const series = seriesData[seriesId];
+            
+            const newEpisode = {
+                title: document.getElementById('newEpisodeTitle').value.trim(),
+                duration: document.getElementById('newEpisodeDuration').value.trim(),
+                description: document.getElementById('newEpisodeDescription').value.trim(),
+                videoUrl: document.getElementById('newEpisodeVideoUrl').value.trim() || ''
+            };
+
+            series.episodes.push(newEpisode);
+            
+            generateEpisodeCode(seriesId, newEpisode, series.episodes.length);
+            showAlert(`Episod adăugat cu succes la "${series.title}"!`, 'success');
+            loadSeriesEpisodes();
+            resetEpisodeForm();
+            switchTab('codeView');
+        });
+
+        function generateSeriesCode(data) {
             const code = `
     // ============================================
     // ${data.title.toUpperCase()}
@@ -539,6 +765,41 @@ ${data.episodes.map((ep, index) => `            {
         ]
     }`;
 
+            generatedCode = code;
+            document.getElementById('codeOutput').textContent = code;
+        }
+
+        function generateEpisodeCode(seriesId, episode, episodeNumber) {
+            const series = seriesData[seriesId];
+            const code = `
+// ============================================
+// ADAUGĂ ACEST EPISOD LA: ${series.title.toUpperCase()}
+// ============================================
+
+// Găsește secțiunea "${seriesId}" în data.js și adaugă acest episod în array-ul "episodes":
+
+            {
+                title: "${episode.title}",
+                duration: "${episode.duration}",
+                description: "${episode.description}",
+                videoUrl: "${episode.videoUrl}"
+            },
+
+// SAU înlocuiește întregul array "episodes" pentru "${seriesId}" cu:
+
+        episodes: [
+${series.episodes.map((ep, index) => `            {
+                title: "${ep.title}",
+                duration: "${ep.duration}",
+                description: "${ep.description}",
+                videoUrl: "${ep.videoUrl}"
+            }${index < series.episodes.length - 1 ? ',' : ''}`).join('\n')}
+        ]
+
+// Total episoade: ${series.episodes.length}
+`;
+
+            generatedCode = code;
             document.getElementById('codeOutput').textContent = code;
         }
 
@@ -565,6 +826,7 @@ ${data.episodes.map((ep, index) => `            {
                     </div>
                     <div class="series-actions">
                         <button class="btn" onclick="viewSeries('${id}')">👁️ Vezi</button>
+                        <button class="btn btn-warning" onclick="addEpisodeToSeries('${id}')">➕ Episod</button>
                     </div>
                 `;
                 listContainer.appendChild(seriesDiv);
@@ -573,6 +835,13 @@ ${data.episodes.map((ep, index) => `            {
 
         function viewSeries(id) {
             window.open(`series.html?id=${id}`, '_blank');
+        }
+
+        function addEpisodeToSeries(id) {
+            document.getElementById('selectSeriesForEpisode').value = id;
+            loadSeriesEpisodes();
+            switchTab('addEpisode');
+            document.querySelector('[onclick*="addEpisode"]').classList.add('active');
         }
     </script>
 </body>
