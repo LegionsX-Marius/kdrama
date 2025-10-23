@@ -14,97 +14,97 @@ const seriesData = {
         year: "2025",
         rating: "7.5",
         genre: "Action, Comedy, Crime, Fantasy",
-        description: "Un clan secret de magie ii omoara parinti pentru ca sunt cei mai mari vrajitori si tricsteri in magie si cartile de joc!",
+        description: "Un clan secret de magie ii omoară părinți pentru ca sunt cei mai mari vrăjitori și tricksteri în magie și cărțile de joc!",
         category: "action",
         episodes: [
             {
                 title: "Episodul 1",
-                duration: " min",
-                description: "Baiataul facem un show de magie in fata unui rau si cei care raspund de orindea si mentinera magiei sa nu fie vazuta de alti muritori, il aresteaza.",
+                duration: "45 min",
+                description: "Băiatul face un show de magie în fața unui rău și cei care răspund de ordine și menținerea magiei să nu fie văzută de alți muritori, îl arestează.",
                 videoUrl: ""
             },
             {
                 title: "Episodul 2",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Continuă aventura magică...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 3",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Misterul se adâncește...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 4",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Noi secrete sunt dezvăluite...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 5",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Confruntarea finală...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 6",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "O nouă aventură începe...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 7",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Secretele trecutului...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 8",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Alianțe neașteptate...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 9",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Capcane și înșelăciuni...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 10",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Adevărul iese la lumină...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 11",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Bătălia decisivă...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 12",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Sfârșitul sau începutul?...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 13",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Noi provocări...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 14",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Ultimele secrete...",
                 videoUrl: ""
             },
             {
                 title: "Episodul 15",
-                duration: " min",
-                description: "#",
+                duration: "45 min",
+                description: "Finalul epic...",
                 videoUrl: ""
             },
         ]
@@ -120,13 +120,13 @@ const seriesData = {
         year: "2019",
         rating: "8.2",
         genre: "Action, Thriller, Mystery",
-        description: "Un cascador descoperă o conspirație masivă după ce nepoțelul său moare într-un accident de avion misterios. Alături de o agentă secretă, pornește într-o misiune periculoasă pentru a descoperi adevărul.",
+        description: "Un cascador descoperă o conspirație masivă după ce nepotul său moare într-un accident de avion misterios. Alături de o agentă secretă, pornește într-o misiune periculoasă pentru a descoperi adevărul.",
         category: "action",
         episodes: [
             {
                 title: "Tragedia aviatică",
                 duration: "75 min",
-                description: "Cha Dal-geon este un cascador a cărui viață se schimbă când nepoțelul său moare într-un accident de avion în Maroc.",
+                description: "Cha Dal-geon este un cascador a cărui viață se schimbă când nepotul său moare într-un accident de avion în Maroc.",
                 videoUrl: ""
             },
             {
@@ -264,7 +264,7 @@ const seriesData = {
     goblin: {
         title: "Goblin",
         image: "img/goblin.jpg",
-        icon: "💝",
+        icon: "👹",
         year: "2016",
         rating: "9.0",
         genre: "Fantasy, Romance, Drama",
@@ -306,9 +306,9 @@ const seriesData = {
         category: "romance",
         episodes: [
             {
-                title: "Întâlnirea orbiă",
+                title: "Întâlnirea orbă",
                 duration: "60 min",
-                description: "Shin Ha-ri se preface că este prietena sa la o întâlnire orbiă, doar pentru a descoperi că bărbatul este președintele companiei sale.",
+                description: "Shin Ha-ri se preface că este prietena sa la o întâlnire oarbă, doar pentru a descoperi că bărbatul este președintele companiei sale.",
                 videoUrl: ""
             },
             {
@@ -368,95 +368,131 @@ const seriesData = {
         image: "img/driftking.jpg",
         icon: "🏎",
         year: "2024",
-        rating: "9.0",
+        rating: "6.5",
         genre: "Race, Romance, Action",
-        description: "Baiatul vrea sa participe la curse si sa devina profesionist, dar fara aprobarea tatalui nu poate.",
-        category: "race", // action, romance, thriller, comedy, fantasy
+        description: "Băiatul vrea să participe la curse și să devină profesionist, dar fără aprobarea tatălui nu poate.",
+        category: "race",
         episodes: [
             {
                 title: "Drift King Episodul 1",
                 duration: "2:40 min",
-                description: "Cum isi incepe el viata ca si legenda.",
+                description: "Cum își începe el viața ca și legendă.",
                 videoUrl: "https://drive.google.com/file/d/1xmtSw5KmPsFmiY9vNw-saVhakXzxP44N/preview"
             },
             {
                 title: "Drift King Episodul 2",
                 duration: "2:26 min",
-                description: "Prietenul sau cel mai bun se lauda ca este Regele din orasj la timp!",
+                description: "Prietenul său cel mai bun se laudă că este Regele din oraș la timp!",
                 videoUrl: "https://drive.google.com/file/d/1RAiRJvdRsaiDVJfnmI7qt5li0kBB9Zbb/preview"
             },
             {
                 title: "Drift King Episodul 3",
                 duration: "3:04 min",
-                description: "Ajung la garaj si din cauza condusului prost el vomita.",
+                description: "Ajung la garaj și din cauza condusului prost el vomită.",
                 videoUrl: "https://drive.google.com/file/d/1J229NY6WKxVs_bsdFnZpGCMxRR7Fl_hm/preview"
             },
             {
                 title: "Drift King Episodul 4",
                 duration: "2:46 min",
-                description: "Prietenul sau se ia la intrecere cu cel mai bun sofer de curse de la Academia rivala",
+                description: "Prietenul său se ia la întrecere cu cel mai bun șofer de curse de la Academia rivală",
                 videoUrl: "https://drive.google.com/file/d/1dILSsSsuFVcNYczP0JZQhvL44RVcd3ew/preview"
             },
             {
                 title: "Drift King Episodul 5",
                 duration: "2:04 min",
-                description: "#",
+                description: "Cursele încep să devină mai intense...",
                 videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv060"
             },
             {
                 title: "Drift King Episodul 6",
                 duration: "2:39 min",
-                description: "#",
+                description: "O nouă provocare apare...",
                 videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv37g"
             },
             {
                 title: "Drift King Episodul 7",
                 duration: "4:00 min",
-                description: "#",
+                description: "Antrenamentul intens continuă...",
                 videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv3n0"
             },
             {
                 title: "Drift King Episodul 8",
                 duration: "2:58 min",
-                description: "#",
+                description: "Confruntarea cu rivalul...",
                 videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv37i"
             },
             {
                 title: "Drift King Episodul 9",
                 duration: "2:24 min",
-                description: "#",
+                description: "Pregătiri pentru cursa mare...",
                 videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv37e"
             },
             {
                 title: "Drift King Episodul 10",
                 duration: "1:13 min",
-                description: "#",
+                description: "Ziua decisivă...",
                 videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv37k"
             },
             {
                 title: "Drift King Episodul 11",
                 duration: "2:34 min",
-                description: "#",
+                description: "Cursa începe...",
                 videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv37o"
             },
             {
                 title: "Drift King Episodul 12",
                 duration: "2:41 min",
-                description: "#",
+                description: "Momentele critice...",
                 videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv3my"
             },
             {
                 title: "Drift King Episodul 13",
                 duration: "1:39 min",
-                description: "#",
+                description: "Finalul se apropie...",
                 videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv3mw"
             },
             {
                 title: "Drift King Episodul 14",
                 duration: "1:42 min",
-                description: "#",
+                description: "Ultima șansă...",
                 videoUrl: "https://geo.dailymotion.com/player.html?video=x9rv37q"
             },
+            {
+                title: "Drift King Episodul 15",
+                duration: "1:42 min",
+                description: "Marele final...",
+                videoUrl: ""
+            },
+            {
+                title: "Drift King Episodul 16",
+                duration: "1:42 min",
+                description: "Sezonul 2 începe...",
+                videoUrl: ""
+            },
+            {
+                title: "Drift King Episodul 17",
+                duration: "1:42 min",
+                description: "Noi provocări...",
+                videoUrl: ""
+            },
+            {
+                title: "Drift King Episodul 18",
+                duration: "1:42 min",
+                description: "Rivalități noi...",
+                videoUrl: ""
+            },
+            {
+                title: "Drift King Episodul 19",
+                duration: "1:42 min",
+                description: "Bătălia continuă...",
+                videoUrl: ""
+            },
+            {
+                title: "Drift King Episodul 20",
+                duration: "1:42 min",
+                description: "Campionatul final...",
+                videoUrl: ""
+            }
         ]
     }
 
@@ -475,7 +511,7 @@ const seriesData = {
         rating: "9.0",
         genre: "Action, Romance",
         description: "Descrierea completă a serialului aici...",
-        category: "action", // action, romance, thriller, comedy, fantasy
+        category: "action", // action, romance, thriller, comedy, fantasy, race
         episodes: [
             {
                 title: "Titlul episodului 1",
@@ -518,35 +554,3 @@ function getAllSeries() {
         ...series
     }));
 }
-
-// ============================================
-// INSTRUCȚIUNI RAPIDE
-// ============================================
-
-/*
-📝 CUM SĂ ADAUGI UN SERIAL:
-
-1. Pune imaginea în folderul img/ (ex: img/nume-serial.jpg)
-2. Copiază template-ul de mai sus
-3. Înlocuiește valorile cu datele tale
-4. Adaugă virgulă (,) înainte de noul serial
-5. Salvează și refresh browser!
-
-📹 LINK-URI VIDEO:
-- YouTube: "https://www.youtube.com/embed/VIDEO_ID"
-- Vimeo: "https://player.vimeo.com/video/VIDEO_ID"
-- Google Drive: "https://drive.google.com/file/d/FILE_ID/preview"
-
-📂 CATEGORII:
-- race
-- action
-- romance
-- thriller
-- comedy
-- fantasy
-
-✨ Gata! Serialul va apărea automat pe site!
-
-*/
-
-

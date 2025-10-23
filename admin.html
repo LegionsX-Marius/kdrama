@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - KDrama Hub</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
+        }
+
+        .admin-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .admin-header p {
+            opacity: 0.9;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            color: #4A90E2;
+            margin-bottom: 20px;
+            border-left: 4px solid #4A90E2;
+            padding-left: 15px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ddd;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f, #a8e063);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .episode-builder {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .episode-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .episode-item input {
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .series-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .series-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .series-info h3 {
+            color: #4A90E2;
+            margin-bottom: 8px;
+        }
+
+        .series-info p {
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .series-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .code-output {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .code-output pre {
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: rgba(86, 171, 47, 0.2);
+            border-color: #56ab2f;
+            color: #a8e063;
+        }
+
+        .alert-danger {
+            background: rgba(255, 65, 108, 0.2);
+            border-color: #ff416c;
+            color: #ff4b2b;
+        }
+
+        .alert-info {
+            background: rgba(74, 144, 226, 0.2);
+            border-color: #4A90E2;
+            color: #64B5F6;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #4A90E2;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #64B5F6;
+        }
+
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-box h2 {
+            color: #4A90E2;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .episode-item {
+                grid-template-columns: 1fr;
+            }
+            
+            .series-item {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <h2>🔐 Admin Login</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Utilizator:</label>
+                    <input type="text" id="adminUser" required>
+                </div>
+                <div class="form-group">
+                    <label>Parolă:</label>
+                    <input type="password" id="adminPass" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Conectare</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="adminPanel" style="display: none;">
+        <div class="admin-container">
+            <a href="index.html" class="back-link">← Înapoi la Site</a>
+            
+            <div class="admin-header">
+                <h1>🎬 Admin Panel - KDrama Hub</h1>
+                <p>Administrează serialele și episoadele din platformă</p>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <div class="card">
+                <h2 class="card-title">➕ Adaugă Serial Nou</h2>
+                <form id="addSeriesForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>ID Serial (ex: squid_game):</label>
+                            <input type="text" id="seriesId" required pattern="[a-z_]+" title="Doar litere mici și underscore">
+                        </div>
+                        <div class="form-group">
+                            <label>Titlu:</label>
+                            <input type="text" id="seriesTitle" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Imagine (ex: img/serial.jpg):</label>
+                            <input type="text" id="seriesImage" placeholder="img/squid-game.jpg">
+                        </div>
+                        <div class="form-group">
+                            <label>Icon (Emoji):</label>
+                            <input type="text" id="seriesIcon" placeholder="🎯" maxlength="2">
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>An:</label>
+                            <input type="text" id="seriesYear" required placeholder="2021">
+                        </div>
+                        <div class="form-group">
+                            <label>Rating (1-10):</label>
+                            <input type="text" id="seriesRating" required placeholder="9.0">
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Gen:</label>
+                            <input type="text" id="seriesGenre" required placeholder="Action, Thriller">
+                        </div>
+                        <div class="form-group">
+                            <label>Categorie:</label>
+                            <select id="seriesCategory" required>
+                                <option value="action">Action</option>
+                                <option value="romance">Romance</option>
+                                <option value="thriller">Thriller</option>
+                                <option value="comedy">Comedy</option>
+                                <option value="fantasy">Fantasy</option>
+                                <option value="race">Race</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descriere:</label>
+                        <textarea id="seriesDescription" required placeholder="Descriere completă a serialului..."></textarea>
+                    </div>
+
+                    <div class="episode-builder">
+                        <h3 style="color: #4A90E2; margin-bottom: 15px;">📺 Episoade</h3>
+                        <div id="episodesContainer"></div>
+                        <button type="button" class="btn btn-secondary" onclick="addEpisodeField()">
+                            ➕ Adaugă Episod
+                        </button>
+                    </div>
+
+                    <div style="margin-top: 30px; display: flex; gap: 15px;">
+                        <button type="submit" class="btn btn-success">💾 Salvează Serial</button>
+                        <button type="button" class="btn btn-danger" onclick="resetForm()">🔄 Resetează</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">📋 Seriale Existente</h2>
+                <div class="series-list" id="seriesList"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">💻 Cod Generat</h2>
+                <p style="color: #aaa; margin-bottom: 15px;">Copiază codul de mai jos și lipește-l în data.js</p>
+                <div class="code-output">
+                    <pre id="codeOutput">// Codul va apărea aici după ce adaugi un serial</pre>
+                </div>
+                <button class="btn" onclick="copyCode()" style="margin-top: 15px;">
+                    📋 Copiază Cod
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        let episodeCount = 0;
+        let isAdminLoggedIn = false;
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const user = document.getElementById('adminUser').value;
+            const pass = document.getElementById('adminPass').value;
+
+            if (user === 'admin' && pass === 'admin123') {
+                isAdminLoggedIn = true;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                loadExistingSeries();
+                addEpisodeField();
+                addEpisodeField();
+                addEpisodeField();
+            } else {
+                showAlert('Date de conectare incorecte!', 'danger');
+            }
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<strong>${type === 'success' ? '✅' : '❌'}</strong> ${message}`;
+            container.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        function addEpisodeField() {
+            episodeCount++;
+            const container = document.getElementById('episodesContainer');
+            const episodeDiv = document.createElement('div');
+            episodeDiv.className = 'episode-item';
+            episodeDiv.innerHTML = `
+                <input type="text" placeholder="Titlu Episod ${episodeCount}" data-ep="title">
+                <input type="text" placeholder="60 min" data-ep="duration">
+                <input type="text" placeholder="Descriere episod..." data-ep="description">
+                <input type="text" placeholder="URL Video (opțional)" data-ep="videoUrl">
+                <button type="button" class="btn btn-danger" style="padding: 8px 15px;" onclick="this.parentElement.remove()">🗑️</button>
+            `;
+            container.appendChild(episodeDiv);
+        }
+
+        function resetForm() {
+            if (confirm('Sigur vrei să resetezi formularul?')) {
+                document.getElementById('addSeriesForm').reset();
+                document.getElementById('episodesContainer').innerHTML = '';
+                episodeCount = 0;
+                addEpisodeField();
+                addEpisodeField();
+                addEpisodeField();
+            }
+        }
+
+        document.getElementById('addSeriesForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const seriesData = {
+                id: document.getElementById('seriesId').value.trim(),
+                title: document.getElementById('seriesTitle').value.trim(),
+                image: document.getElementById('seriesImage').value.trim() || '',
+                icon: document.getElementById('seriesIcon').value.trim() || '🎬',
+                year: document.getElementById('seriesYear').value.trim(),
+                rating: document.getElementById('seriesRating').value.trim(),
+                genre: document.getElementById('seriesGenre').value.trim(),
+                description: document.getElementById('seriesDescription').value.trim(),
+                category: document.getElementById('seriesCategory').value,
+                episodes: []
+            };
+
+            const episodeItems = document.querySelectorAll('.episode-item');
+            episodeItems.forEach(item => {
+                const title = item.querySelector('[data-ep="title"]').value.trim();
+                const duration = item.querySelector('[data-ep="duration"]').value.trim();
+                const description = item.querySelector('[data-ep="description"]').value.trim();
+                const videoUrl = item.querySelector('[data-ep="videoUrl"]').value.trim();
+
+                if (title && duration) {
+                    seriesData.episodes.push({
+                        title: title,
+                        duration: duration,
+                        description: description || 'Descriere episod',
+                        videoUrl: videoUrl || ''
+                    });
+                }
+            });
+
+            if (seriesData.episodes.length === 0) {
+                showAlert('Adaugă cel puțin un episod!', 'danger');
+                return;
+            }
+
+            generateCode(seriesData);
+            showAlert(`Serial "${seriesData.title}" generat cu succes!`, 'success');
+        });
+
+        function generateCode(data) {
+            const code = `
+    // ============================================
+    // ${data.title.toUpperCase()}
+    // ============================================
+    ,
+    ${data.id}: {
+        title: "${data.title}",
+        image: "${data.image}",
+        icon: "${data.icon}",
+        year: "${data.year}",
+        rating: "${data.rating}",
+        genre: "${data.genre}",
+        description: "${data.description}",
+        category: "${data.category}",
+        episodes: [
+${data.episodes.map((ep, index) => `            {
+                title: "${ep.title}",
+                duration: "${ep.duration}",
+                description: "${ep.description}",
+                videoUrl: "${ep.videoUrl}"
+            }${index < data.episodes.length - 1 ? ',' : ''}`).join('\n')}
+        ]
+    }`;
+
+            document.getElementById('codeOutput').textContent = code;
+        }
+
+        function copyCode() {
+            const codeText = document.getElementById('codeOutput').textContent;
+            navigator.clipboard.writeText(codeText).then(() => {
+                showAlert('Cod copiat în clipboard!', 'success');
+            }).catch(() => {
+                showAlert('Eroare la copierea codului!', 'danger');
+            });
+        }
+
+        function loadExistingSeries() {
+            const listContainer = document.getElementById('seriesList');
+            listContainer.innerHTML = '';
+
+            Object.entries(seriesData).forEach(([id, series]) => {
+                const seriesDiv = document.createElement('div');
+                seriesDiv.className = 'series-item';
+                seriesDiv.innerHTML = `
+                    <div class="series-info">
+                        <h3>${series.icon} ${series.title}</h3>
+                        <p>ID: ${id} | Categorie: ${series.category} | ${series.episodes.length} episoade | Rating: ${series.rating}⭐</p>
+                    </div>
+                    <div class="series-actions">
+                        <button class="btn" onclick="viewSeries('${id}')">👁️ Vezi</button>
+                    </div>
+                `;
+                listContainer.appendChild(seriesDiv);
+            });
+        }
+
+        function viewSeries(id) {
+            window.open(`series.html?id=${id}`, '_blank');
+        }
+    </script>
+</body>
+</html>

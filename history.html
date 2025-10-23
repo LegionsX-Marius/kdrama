@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Istoric Vizionări - KDrama Hub</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #fff;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            color: #333;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        body.light-mode header {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(74, 144, 226, 0.3);
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: rotate(-5deg);
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(53, 122, 189, 0.2));
+            border: 2px solid #4A90E2;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        body.light-mode .back-btn {
+            color: #333;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            color: #4A90E2;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        body.light-mode .page-subtitle {
+            color: #666;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(74, 144, 226, 0.3);
+        }
+
+        body.light-mode .stat-card {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4A90E2;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        body.light-mode .stat-label {
+            color: #666;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .history-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        body.light-mode .history-item {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-item:hover {
+            border-color: #4A90E2;
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(74, 144, 226, 0.2);
+        }
+
+        .history-poster {
+            width: 100px;
+            height: 140px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .history-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .history-details {
+            flex: 1;
+        }
+
+        .history-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        body.light-mode .history-title {
+            color: #333;
+        }
+
+        .history-episode {
+            font-size: 14px;
+            color: #4A90E2;
+            margin-bottom: 8px;
+        }
+
+        .history-date {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4A90E2, #357ABD);
+            transition: width 0.3s;
+        }
+
+        .continue-btn {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .continue-btn:hover {
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #888;
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .empty-subtext {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .clear-history-btn {
+            background: linear-gradient(135deg, rgba(255, 65, 108, 0.2), rgba(255, 75, 43, 0.2));
+            border: 2px solid #ff416c;
+            color: #ff4b2b;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .clear-history-btn:hover {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .history-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .history-poster {
+                width: 80px;
+                height: 112px;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-container" onclick="window.location.href='index.html'">
+                <div class="logo">
+                    <img src="img/logo.png" alt="KDrama Hub">
+                </div>
+            </div>
+            <a href="index.html" class="back-btn">← Înapoi</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">📺 Istoric Vizionări</h1>
+            <p class="page-subtitle">Continuă de unde ai rămas</p>
+        </div>
+
+        <div class="stats-container" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-icon">🎬</div>
+                <div class="stat-value" id="totalSeries">0</div>
+                <div class="stat-label">Seriale Vizionate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📺</div>
+                <div class="stat-value" id="totalEpisodes">0</div>
+                <div class="stat-label">Episoade Vizionate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value" id="totalTime">0h</div>
+                <div class="stat-label">Timp Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value" id="streak">0</div>
+                <div class="stat-label">Zile Consecutive</div>
+            </div>
+        </div>
+
+        <button class="clear-history-btn" onclick="clearHistory()" id="clearBtn" style="display: none;">
+            🗑️ Șterge Istoric
+        </button>
+
+        <div class="history-list" id="historyList"></div>
+
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">📺</div>
+            <div class="empty-text">Niciun episod vizionat încă</div>
+            <div class="empty-subtext">Începe să vizionezi seriale pentru a vedea istoricul aici!</div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        const savedTheme = localStorage.getItem('kdrama_theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+        }
+
+        const isLoggedIn = localStorage.getItem('kdrama_logged_in') === 'true';
+        const currentUser = localStorage.getItem('kdrama_user') || null;
+
+        if (!isLoggedIn) {
+            alert('Trebuie să fii conectat pentru a vedea istoricul!');
+            window.location.href = 'login.html';
+        }
+
+        function getWatchHistory() {
+            return JSON.parse(localStorage.getItem(`kdrama_history_${currentUser}`) || '[]');
+        }
+
+        function calculateStats(history) {
+            const uniqueSeries = new Set(history.map(h => h.seriesId)).size;
+            const totalEpisodes = history.length;
+            
+            // Calculate total watch time (estimate 60 min per episode)
+            const totalMinutes = totalEpisodes * 60;
+            const totalHours = Math.floor(totalMinutes / 60);
+            
+            // Calculate streak (simplified)
+            const streak = history.length > 0 ? Math.min(history.length, 7) : 0;
+
+            return { uniqueSeries, totalEpisodes, totalHours, streak };
+        }
+
+        function renderHistory() {
+            const history = getWatchHistory();
+            const historyList = document.getElementById('historyList');
+            const emptyState = document.getElementById('emptyState');
+            const clearBtn = document.getElementById('clearBtn');
+
+            if (history.length === 0) {
+                historyList.style.display = 'none';
+                emptyState.style.display = 'block';
+                clearBtn.style.display = 'none';
+                
+                // Reset stats
+                document.getElementById('totalSeries').textContent = '0';
+                document.getElementById('totalEpisodes').textContent = '0';
+                document.getElementById('totalTime').textContent = '0h';
+                document.getElementById('streak').textContent = '0';
+                return;
+            }
+
+            historyList.style.display = 'flex';
+            emptyState.style.display = 'none';
+            clearBtn.style.display = 'inline-block';
+
+            // Calculate and display stats
+            const stats = calculateStats(history);
+            document.getElementById('totalSeries').textContent = stats.uniqueSeries;
+            document.getElementById('totalEpisodes').textContent = stats.totalEpisodes;
+            document.getElementById('totalTime').textContent = stats.totalHours + 'h';
+            document.getElementById('streak').textContent = stats.streak;
+
+            // Group by series (keep only latest episode per series)
+            const latestBySeries = {};
+            history.forEach(item => {
+                if (!latestBySeries[item.seriesId] || 
+                    new Date(item.timestamp) > new Date(latestBySeries[item.seriesId].timestamp)) {
+                    latestBySeries[item.seriesId] = item;
+                }
+            });
+
+            historyList.innerHTML = '';
+
+            Object.values(latestBySeries)
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .forEach(item => {
+                    const series = seriesData[item.seriesId];
+                    if (!series) return;
+
+                    const progress = ((item.episodeNumber / series.episodes.length) * 100).toFixed(0);
+                    const date = new Date(item.timestamp).toLocaleDateString('ro-RO', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.onclick = () => {
+                        window.location.href = `episode.html?series=${item.seriesId}&ep=${item.episodeNumber}`;
+                    };
+
+                    historyItem.innerHTML = `
+                        <div class="history-poster">
+                            ${series.image ? 
+                                `<img src="${series.image}" alt="${series.title}">` : 
+                                series.icon || '🎬'}
+                        </div>
+                        <div class="history-details">
+                            <div class="history-title">${series.title}</div>
+                            <div class="history-episode">
+                                📺 Episodul ${item.episodeNumber} din ${series.episodes.length}
+                            </div>
+                            <div class="history-date">📅 ${date}</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: ${progress}%"></div>
+                            </div>
+                        </div>
+                        <button class="continue-btn" onclick="event.stopPropagation(); continueWatching('${item.seriesId}', ${item.episodeNumber})">
+                            ▶ Continuă
+                        </button>
+                    `;
+
+                    historyList.appendChild(historyItem);
+                });
+        }
+
+        function continueWatching(seriesId, episodeNumber) {
+            window.location.href = `episode.html?series=${seriesId}&ep=${episodeNumber}`;
+        }
+
+        function clearHistory() {
+            if (confirm('Sigur vrei să ștergi tot istoricul de vizionări?')) {
+                localStorage.removeItem(`kdrama_history_${currentUser}`);
+                renderHistory();
+                alert('✅ Istoricul a fost șters!');
+            }
+        }
+
+        renderHistory();
+    </script>
+</body>
+</html>
