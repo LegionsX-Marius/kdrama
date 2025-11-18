@@ -459,40 +459,340 @@ const seriesData = {
             },
             {
                 title: "Drift King Episodul 15",
-                duration: "1:42 min",
+                duration: "1:33 min",
                 description: "Marele final...",
-                videoUrl: ""
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9skhoe"
             },
             {
                 title: "Drift King Episodul 16",
-                duration: "1:42 min",
+                duration: "1:36 min",
                 description: "Sezonul 2 începe...",
-                videoUrl: ""
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9sljk8"
             },
             {
                 title: "Drift King Episodul 17",
-                duration: "1:42 min",
+                duration: "1:31 min",
                 description: "Noi provocări...",
-                videoUrl: ""
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9sljl2"
             },
             {
                 title: "Drift King Episodul 18",
-                duration: "1:42 min",
+                duration: "1:12 min",
                 description: "Rivalități noi...",
-                videoUrl: ""
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9sljna"
             },
             {
                 title: "Drift King Episodul 19",
-                duration: "1:42 min",
+                duration: "1:06 min",
                 description: "Bătălia continuă...",
-                videoUrl: ""
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9sljn8"
             },
             {
                 title: "Drift King Episodul 20",
-                duration: "1:42 min",
+                duration: "1:09 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9sljne"
+            },
+            {
+                title: "Drift King Episodul 21",
+                duration: "1:17 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9t2kme"
+            },
+            {
+                title: "Drift King Episodul 22",
+                duration: "1:20 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9sljng"
+            },
+            {
+                title: "Drift King Episodul 23",
+                duration: "0:53 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9sljni"
+            },
+            {
+                title: "Drift King Episodul 24",
+                duration: "1:27 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9t2kmg"
+            },
+            {
+                title: "Drift King Episodul 25",
+                duration: "1:17 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9sljnm"
+            },
+            {
+                title: "Drift King Episodul 26",
+                duration: "1:44 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9t2ksk"
+            },
+            {
+                title: "Drift King Episodul 27",
+                duration: "1:36 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9sljnq"
+            },
+            {
+                title: "Drift King Episodul 28",
+                duration: "0:49 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9t2kyc"
+            },
+            {
+                title: "Drift King Episodul 29",
+                duration: "0:58 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9t2ksi"
+            },
+            {
+                title: "Drift King Episodul 30",
+                duration: "1:16 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9t2kss"
+            },
+            {
+                title: "Drift King Episodul 31",
+                duration: "0:53 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9t2kye"
+            },
+            {
+                title: "Drift King Episodul 32",
+                duration: "0:53 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9t2ksq"
+            },
+            {
+                title: "Drift King Episodul 33",
+                duration: "0:52 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video=x9t2ksw"
+            },
+            {
+                title: "Drift King Episodul 34",
+                duration: "1:03 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 35",
+                duration: "1:14 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 36",
+                duration: "0:52 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 37",
+                duration: "0:47 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 38",
+                duration: "1:38 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 39",
+                duration: "1:07 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 40",
+                duration: "0:47 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 41",
+                duration: "1:23 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 42",
+                duration: "1:20 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 43",
+                duration: "1:11 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 44",
+                duration: "1:20 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 45",
+                duration: "1:33 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 46",
+                duration: "1:19 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 47",
+                duration: "1:11 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 48",
+                duration: "0:53 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 49",
+                duration: "1:38 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 50",
+                duration: "0:54 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 51",
+                duration: "1:12 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 52",
+                duration: "1:06 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 53",
+                duration: "1:03 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 54",
+                duration: "1:25 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 55",
+                duration: "0:58 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 56",
+                duration: "0:48 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 57",
+                duration: "0:52 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 58",
+                duration: "0:47 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 59",
+                duration: "0:50 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 60",
+                duration: "1:08 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 61",
+                duration: "1:07 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 62",
+                duration: "1:09 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 63",
+                duration: "0:51 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 64",
+                duration: "0:48 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 65",
+                duration: "0:52 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 66",
+                duration: "1:04 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 67",
+                duration: "1:44 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 68",
+                duration: "1:01 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 69",
+                duration: "0:58 min",
+                description: "...",
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
+            {
+                title: "Drift King Episodul 70",
+                duration: "1:34 min",
                 description: "Campionatul final...",
-                videoUrl: ""
-            }
+                videoUrl: "https://geo.dailymotion.com/player.html?video="
+            },
         ]
     }
 
