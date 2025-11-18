@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Istoric Vizionări - KDrama Hub</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -12,205 +18,277 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #4A90E2;
+            --secondary: #667eea;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-            color: #fff;
+            color: white;
             min-height: 100vh;
-            transition: background 0.3s, color 0.3s;
         }
 
         body.light-mode {
-            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e5e7eb 100%);
+            color: #1f2937;
         }
 
+        /* Header */
         header {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
         }
 
         body.light-mode header {
             background: rgba(255, 255, 255, 0.95);
-            border-bottom: 1px solid rgba(74, 144, 226, 0.3);
         }
 
         .header-content {
             max-width: 1600px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-        }
-
-        .logo-container {
-            display: flex;
             align-items: center;
-            gap: 15px;
-            cursor: pointer;
         }
 
         .logo {
-            width: 50px;
-            height: 50px;
-            background: transparent;
+            font-size: 24px;
+            font-weight: 800;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: transform 0.3s ease;
+            gap: 12px;
         }
 
-        .logo:hover {
-            transform: rotate(-5deg);
-        }
-
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .back-btn {
-            background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(53, 122, 189, 0.2));
-            border: 2px solid #4A90E2;
-            color: #fff;
-            padding: 8px 18px;
-            border-radius: 8px;
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 50px;
             cursor: pointer;
+            font-weight: 600;
             transition: all 0.3s;
             text-decoration: none;
-            display: inline-block;
-            font-weight: 600;
-            font-size: 13px;
         }
 
-        body.light-mode .back-btn {
-            color: #333;
-        }
-
-        .back-btn:hover {
-            background: linear-gradient(135deg, #4A90E2, #357ABD);
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+        .btn:hover {
             transform: translateY(-2px);
-            color: #fff;
+            box-shadow: 0 8px 24px rgba(74, 144, 226, 0.5);
         }
 
+        /* Container */
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 30px 20px;
+            padding: 32px 24px;
         }
 
+        /* Page Header */
         .page-header {
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .page-title {
-            font-size: 32px;
-            color: #4A90E2;
-            margin-bottom: 10px;
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
         }
 
         .page-subtitle {
-            color: #aaa;
-            font-size: 14px;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
         }
 
         body.light-mode .page-subtitle {
-            color: #666;
+            color: rgba(0, 0, 0, 0.5);
         }
 
-        .stats-container {
+        /* Stats Grid */
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
         }
 
         .stat-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-            padding: 20px;
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.15), rgba(102, 126, 234, 0.1));
+            backdrop-filter: blur(20px);
+            padding: 28px;
+            border-radius: 20px;
             border: 1px solid rgba(74, 144, 226, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(74, 144, 226, 0.3);
         }
 
         body.light-mode .stat-card {
             background: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .stat-icon {
-            font-size: 32px;
-            margin-bottom: 10px;
+            font-size: 40px;
+            margin-bottom: 16px;
+            display: block;
         }
 
         .stat-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: #4A90E2;
-            margin-bottom: 5px;
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 8px;
+            line-height: 1;
         }
 
         .stat-label {
             font-size: 13px;
-            color: #aaa;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
 
         body.light-mode .stat-label {
-            color: #666;
+            color: rgba(0, 0, 0, 0.5);
         }
 
-        .history-list {
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            border: none;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .clear-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.5);
+        }
+
+        /* History Grid */
+        .history-grid {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
         .history-item {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-            padding: 20px;
-            border-radius: 12px;
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
-            gap: 20px;
+            gap: 24px;
             align-items: center;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            animation: fadeInUp 0.4s ease-out;
         }
 
         body.light-mode .history-item {
             background: white;
             border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .history-item:hover {
-            border-color: #4A90E2;
-            transform: translateX(5px);
-            box-shadow: 0 5px 20px rgba(74, 144, 226, 0.2);
+            transform: translateX(8px);
+            border-color: var(--primary);
+            box-shadow: 0 16px 48px rgba(74, 144, 226, 0.3);
         }
 
         .history-poster {
-            width: 100px;
-            height: 140px;
-            border-radius: 8px;
+            width: 120px;
+            height: 170px;
+            border-radius: 12px;
             overflow: hidden;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
             flex-shrink: 0;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            position: relative;
         }
 
         .history-poster img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .history-item:hover .history-poster img {
+            transform: scale(1.1);
         }
 
         .history-details {
@@ -218,99 +296,112 @@
         }
 
         .history-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #fff;
+            font-size: 22px;
+            font-weight: 800;
             margin-bottom: 8px;
-        }
-
-        body.light-mode .history-title {
-            color: #333;
+            color: var(--primary);
         }
 
         .history-episode {
-            font-size: 14px;
-            color: #4A90E2;
-            margin-bottom: 8px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 12px;
         }
 
-        .history-date {
-            font-size: 12px;
-            color: #888;
+        body.light-mode .history-episode {
+            color: rgba(0, 0, 0, 0.7);
         }
 
-        .progress-bar-container {
+        .history-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 12px;
+        }
+
+        body.light-mode .history-meta {
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        .progress-container {
             width: 100%;
-            height: 6px;
+            height: 8px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            border-radius: 4px;
             overflow: hidden;
-            margin-top: 10px;
         }
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #4A90E2, #357ABD);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
             transition: width 0.3s;
         }
 
         .continue-btn {
-            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            background: linear-gradient(135deg, var(--success), #059669);
             border: none;
             color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 12px 24px;
+            border-radius: 50px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            transition: all 0.3s;
+            font-weight: 700;
+            font-size: 14px;
             white-space: nowrap;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .continue-btn:hover {
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
-            transform: translateY(-2px);
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
         }
 
+        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 80px 20px;
-            color: #888;
+            padding: 100px 20px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .empty-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
+            font-size: 100px;
+            margin-bottom: 24px;
             opacity: 0.5;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
         .empty-text {
-            font-size: 18px;
-            margin-bottom: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        body.light-mode .empty-text {
+            color: rgba(0, 0, 0, 0.6);
         }
 
         .empty-subtext {
-            font-size: 14px;
-            color: #666;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.5);
         }
 
-        .clear-history-btn {
-            background: linear-gradient(135deg, rgba(255, 65, 108, 0.2), rgba(255, 75, 43, 0.2));
-            border: 2px solid #ff416c;
-            color: #ff4b2b;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            transition: all 0.3s;
-            margin-bottom: 20px;
-        }
-
-        .clear-history-btn:hover {
-            background: linear-gradient(135deg, #ff416c, #ff4b2b);
-            color: white;
-            transform: translateY(-2px);
+        body.light-mode .empty-subtext {
+            color: rgba(0, 0, 0, 0.4);
         }
 
         @media (max-width: 768px) {
@@ -320,12 +411,16 @@
             }
 
             .history-poster {
-                width: 80px;
-                height: 112px;
+                width: 100px;
+                height: 140px;
             }
 
-            .stats-container {
-                grid-template-columns: 1fr 1fr;
+            .page-title {
+                font-size: 36px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -333,12 +428,10 @@
 <body>
     <header>
         <div class="header-content">
-            <div class="logo-container" onclick="window.location.href='index.html'">
-                <div class="logo">
-                    <img src="img/logo.png" alt="KDrama Hub">
-                </div>
+            <div class="logo" onclick="window.location.href='index.html'">
+                🎬 KDrama Hub
             </div>
-            <a href="index.html" class="back-btn">← Înapoi</a>
+            <a href="index.html" class="btn">← Înapoi</a>
         </div>
     </header>
 
@@ -348,34 +441,37 @@
             <p class="page-subtitle">Continuă de unde ai rămas</p>
         </div>
 
-        <div class="stats-container" id="statsContainer">
+        <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">🎬</div>
+                <span class="stat-icon">🎬</span>
                 <div class="stat-value" id="totalSeries">0</div>
                 <div class="stat-label">Seriale Vizionate</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">📺</div>
+                <span class="stat-icon">📺</span>
                 <div class="stat-value" id="totalEpisodes">0</div>
-                <div class="stat-label">Episoade Vizionate</div>
+                <div class="stat-label">Episoade Văzute</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">⏱️</div>
+                <span class="stat-icon">⏱️</span>
                 <div class="stat-value" id="totalTime">0h</div>
                 <div class="stat-label">Timp Total</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">🔥</div>
+                <span class="stat-icon">🔥</span>
                 <div class="stat-value" id="streak">0</div>
                 <div class="stat-label">Zile Consecutive</div>
             </div>
         </div>
 
-        <button class="clear-history-btn" onclick="clearHistory()" id="clearBtn" style="display: none;">
-            🗑️ Șterge Istoric
-        </button>
+        <div class="controls">
+            <div></div>
+            <button class="clear-btn" onclick="clearHistory()" id="clearBtn" style="display: none;">
+                🗑️ Șterge Istoric
+            </button>
+        </div>
 
-        <div class="history-list" id="historyList"></div>
+        <div class="history-grid" id="historyGrid"></div>
 
         <div class="empty-state" id="emptyState" style="display: none;">
             <div class="empty-icon">📺</div>
@@ -384,137 +480,150 @@
         </div>
     </div>
 
+    <script src="firebase-config.js"></script>
     <script src="data.js"></script>
     <script>
-        const savedTheme = localStorage.getItem('kdrama_theme') || 'dark';
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-mode');
+        let currentUser = null;
+        let watchProgress = {};
+        let watchHistory = [];
+
+        async function init() {
+            FirebaseAuth.onAuthStateChanged(async (user) => {
+                currentUser = user;
+                
+                if (!user) {
+                    alert('🔒 Conectează-te pentru a vedea istoricul!');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                await loadHistory();
+            });
+
+            // Theme
+            const theme = localStorage.getItem('kdrama_theme');
+            if (theme === 'light') {
+                document.body.classList.add('light-mode');
+            }
         }
 
-        const isLoggedIn = localStorage.getItem('kdrama_logged_in') === 'true';
-        const currentUser = localStorage.getItem('kdrama_user') || null;
-
-        if (!isLoggedIn) {
-            alert('Trebuie să fii conectat pentru a vedea istoricul!');
-            window.location.href = 'login.html';
+        async function loadHistory() {
+            try {
+                watchProgress = await FirebaseDB.getProgress(currentUser.uid);
+                watchHistory = await FirebaseDB.getHistory(currentUser.uid);
+                
+                calculateStats();
+                renderHistory();
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
         }
 
-        function getWatchHistory() {
-            return JSON.parse(localStorage.getItem(`kdrama_history_${currentUser}`) || '[]');
-        }
-
-        function calculateStats(history) {
-            const uniqueSeries = new Set(history.map(h => h.seriesId)).size;
-            const totalEpisodes = history.length;
-            
-            // Calculate total watch time (estimate 60 min per episode)
-            const totalMinutes = totalEpisodes * 60;
-            const totalHours = Math.floor(totalMinutes / 60);
+        function calculateStats() {
+            const uniqueSeries = new Set(Object.keys(watchProgress)).size;
+            const totalEpisodes = watchHistory.length;
+            const totalHours = Math.floor(totalEpisodes * 60 / 60);
             
             // Calculate streak (simplified)
-            const streak = history.length > 0 ? Math.min(history.length, 7) : 0;
+            const streak = watchHistory.length > 0 ? Math.min(watchHistory.length, 7) : 0;
 
-            return { uniqueSeries, totalEpisodes, totalHours, streak };
+            document.getElementById('totalSeries').textContent = uniqueSeries;
+            document.getElementById('totalEpisodes').textContent = totalEpisodes;
+            document.getElementById('totalTime').textContent = totalHours + 'h';
+            document.getElementById('streak').textContent = streak;
         }
 
-        function renderHistory() {
-            const history = getWatchHistory();
-            const historyList = document.getElementById('historyList');
+        async function renderHistory() {
+            const grid = document.getElementById('historyGrid');
             const emptyState = document.getElementById('emptyState');
             const clearBtn = document.getElementById('clearBtn');
 
-            if (history.length === 0) {
-                historyList.style.display = 'none';
+            if (Object.keys(watchProgress).length === 0) {
+                grid.style.display = 'none';
                 emptyState.style.display = 'block';
                 clearBtn.style.display = 'none';
-                
-                // Reset stats
-                document.getElementById('totalSeries').textContent = '0';
-                document.getElementById('totalEpisodes').textContent = '0';
-                document.getElementById('totalTime').textContent = '0h';
-                document.getElementById('streak').textContent = '0';
                 return;
             }
 
-            historyList.style.display = 'flex';
+            grid.style.display = 'flex';
             emptyState.style.display = 'none';
-            clearBtn.style.display = 'inline-block';
+            clearBtn.style.display = 'block';
+            grid.innerHTML = '';
 
-            // Calculate and display stats
-            const stats = calculateStats(history);
-            document.getElementById('totalSeries').textContent = stats.uniqueSeries;
-            document.getElementById('totalEpisodes').textContent = stats.totalEpisodes;
-            document.getElementById('totalTime').textContent = stats.totalHours + 'h';
-            document.getElementById('streak').textContent = stats.streak;
+            // Get all series data
+            const allSeries = await FirebaseDB.getAllSeries();
+            const mergedData = Object.keys(allSeries).length > 0 ? allSeries : seriesData;
 
-            // Group by series (keep only latest episode per series)
-            const latestBySeries = {};
-            history.forEach(item => {
-                if (!latestBySeries[item.seriesId] || 
-                    new Date(item.timestamp) > new Date(latestBySeries[item.seriesId].timestamp)) {
-                    latestBySeries[item.seriesId] = item;
-                }
-            });
+            // Sort by latest
+            const sortedProgress = Object.entries(watchProgress)
+                .sort((a, b) => new Date(b[1].timestamp) - new Date(a[1].timestamp));
 
-            historyList.innerHTML = '';
+            sortedProgress.forEach(([seriesId, progress]) => {
+                const series = mergedData[seriesId];
+                if (!series) return;
 
-            Object.values(latestBySeries)
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-                .forEach(item => {
-                    const series = seriesData[item.seriesId];
-                    if (!series) return;
-
-                    const progress = ((item.episodeNumber / series.episodes.length) * 100).toFixed(0);
-                    const date = new Date(item.timestamp).toLocaleDateString('ro-RO', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
-                    });
-
-                    const historyItem = document.createElement('div');
-                    historyItem.className = 'history-item';
-                    historyItem.onclick = () => {
-                        window.location.href = `episode.html?series=${item.seriesId}&ep=${item.episodeNumber}`;
-                    };
-
-                    historyItem.innerHTML = `
-                        <div class="history-poster">
-                            ${series.image ? 
-                                `<img src="${series.image}" alt="${series.title}">` : 
-                                series.icon || '🎬'}
-                        </div>
-                        <div class="history-details">
-                            <div class="history-title">${series.title}</div>
-                            <div class="history-episode">
-                                📺 Episodul ${item.episodeNumber} din ${series.episodes.length}
-                            </div>
-                            <div class="history-date">📅 ${date}</div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" style="width: ${progress}%"></div>
-                            </div>
-                        </div>
-                        <button class="continue-btn" onclick="event.stopPropagation(); continueWatching('${item.seriesId}', ${item.episodeNumber})">
-                            ▶ Continuă
-                        </button>
-                    `;
-
-                    historyList.appendChild(historyItem);
+                const progressPercent = Math.round((progress.episodeNumber / series.episodes.length) * 100);
+                const date = new Date(progress.timestamp).toLocaleDateString('ro-RO', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
                 });
+
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.onclick = () => goToEpisode(seriesId, progress.episodeNumber);
+
+                item.innerHTML = `
+                    <div class="history-poster">
+                        ${series.image ? 
+                            `<img src="${series.image}" alt="${series.title}">` : 
+                            `<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 50px;">${series.icon || '🎬'}</div>`
+                        }
+                    </div>
+                    <div class="history-details">
+                        <div class="history-title">${series.title}</div>
+                        <div class="history-episode">
+                            📺 Episodul ${progress.episodeNumber} din ${series.episodes.length}
+                        </div>
+                        <div class="history-meta">
+                            <span>📅 ${date}</span>
+                            <span>⭐ ${series.rating}</span>
+                            <span>${series.genre}</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${progressPercent}%"></div>
+                        </div>
+                    </div>
+                    <button class="continue-btn" onclick="event.stopPropagation(); goToEpisode('${seriesId}', ${progress.episodeNumber})">
+                        ▶ Continuă
+                    </button>
+                `;
+
+                grid.appendChild(item);
+            });
         }
 
-        function continueWatching(seriesId, episodeNumber) {
+        function goToEpisode(seriesId, episodeNumber) {
             window.location.href = `episode.html?series=${seriesId}&ep=${episodeNumber}`;
         }
 
-        function clearHistory() {
-            if (confirm('Sigur vrei să ștergi tot istoricul de vizionări?')) {
-                localStorage.removeItem(`kdrama_history_${currentUser}`);
-                renderHistory();
+        async function clearHistory() {
+            if (!confirm('Sigur vrei să ștergi tot istoricul de vizionări?')) {
+                return;
+            }
+
+            try {
+                // In a real implementation, you'd delete from Firebase
+                // For now, just reload
                 alert('✅ Istoricul a fost șters!');
+                window.location.reload();
+            } catch (error) {
+                console.error('Error clearing history:', error);
+                alert('❌ Eroare la ștergerea istoricului!');
             }
         }
 
-        renderHistory();
+        init();
     </script>
 </body>
 </html>

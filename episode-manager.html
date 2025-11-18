@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Episode Manager - KDrama Hub</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4A90E2;
+            --secondary: #667eea;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 32px 24px;
+            box-shadow: 0 16px 48px rgba(74, 144, 226, 0.3);
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 36px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid white;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: white;
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 24px;
+        }
+
+        .sidebar-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(74, 144, 226, 0.3);
+            padding-bottom: 12px;
+        }
+
+        .series-list {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .series-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .series-item:hover {
+            background: rgba(74, 144, 226, 0.15);
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .series-item.active {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.3), rgba(102, 126, 234, 0.2));
+            border-color: var(--primary);
+        }
+
+        .series-item-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .series-item-meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Content Area */
+        .content-area {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            backdrop-filter: blur(20px);
+            padding: 32px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(74, 144, 226, 0.3);
+        }
+
+        .content-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .add-episode-btn {
+            background: linear-gradient(135deg, var(--success), #059669);
+            border: none;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .add-episode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 36px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Episodes Table */
+        .episodes-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .episodes-table th {
+            background: rgba(74, 144, 226, 0.2);
+            padding: 16px;
+            text-align: left;
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .episodes-table th:first-child {
+            border-radius: 12px 0 0 12px;
+        }
+
+        .episodes-table th:last-child {
+            border-radius: 0 12px 12px 0;
+        }
+
+        .episodes-table td {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .episodes-table td:first-child {
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px 0 0 12px;
+        }
+
+        .episodes-table td:last-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0 12px 12px 0;
+        }
+
+        .episodes-table tr:hover td {
+            background: rgba(74, 144, 226, 0.1);
+        }
+
+        .episode-number {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .video-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .video-available {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+            border: 1px solid var(--success);
+        }
+
+        .video-missing {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid var(--danger);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, var(--secondary), #764ba2);
+            color: white;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        .btn-small:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 36px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            box-shadow: 0 24px 72px rgba(0, 0, 0, 0.7);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(74, 144, 226, 0.3);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 32px;
+            cursor: pointer;
+            transition: all 0.3s;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 28px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1 class="header-title">📺 Episode Manager</h1>
+            <a href="admin.html" class="btn">← Admin Panel</a>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2 class="sidebar-title">🎬 Seriale</h2>
+            <div class="series-list" id="seriesList">
+                <div style="text-align: center; color: rgba(255,255,255,0.5); padding: 20px;">
+                    Se încarcă...
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="content-area">
+            <div id="emptyState" class="empty-state">
+                <div class="empty-icon">📺</div>
+                <h2>Selectează un serial</h2>
+                <p style="color: rgba(255,255,255,0.6); margin-top: 12px;">Alege un serial din listă pentru a gestiona episoadele</p>
+            </div>
+
+            <div id="episodesContent" style="display: none;">
+                <div class="content-header">
+                    <div class="content-title">
+                        <span id="currentSeriesIcon">🎬</span>
+                        <span id="currentSeriesTitle">Serial</span>
+                    </div>
+                    <button class="add-episode-btn" onclick="openAddModal()">
+                        ➕ Adaugă Episod
+                    </button>
+                </div>
+
+                <table class="episodes-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">#</th>
+                            <th>Titlu</th>
+                            <th style="width: 120px;">Durată</th>
+                            <th style="width: 140px;">Video</th>
+                            <th style="width: 160px;">Acțiuni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="episodesTableBody"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal" id="episodeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">➕ Adaugă Episod</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+
+            <form id="episodeForm">
+                <div class="form-group">
+                    <label>Titlu Episod *</label>
+                    <input type="text" id="episodeTitle" required placeholder="Episodul 1">
+                </div>
+
+                <div class="form-group">
+                    <label>Durată *</label>
+                    <input type="text" id="episodeDuration" required placeholder="60 min">
+                </div>
+
+                <div class="form-group">
+                    <label>Descriere *</label>
+                    <textarea id="episodeDescription" required placeholder="Descriere episod..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>URL Video (opțional)</label>
+                    <input type="url" id="episodeVideoUrl" placeholder="https://www.youtube.com/embed/VIDEO_ID">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal()" style="background: rgba(255,255,255,0.1);">
+                        Anulează
+                    </button>
+                    <button type="submit" class="add-episode-btn" id="saveBtn">
+                        💾 Salvează
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script src="data.js"></script>
+    <script>
+        let currentSeriesId = null;
+        let currentSeries = null;
+        let editingIndex = null;
+
+        async function init() {
+            FirebaseAuth.onAuthStateChanged(async (user) => {
+                if (!user) {
+                    alert('🔒 Trebuie să fii conectat!');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                await loadSeriesList();
+            });
+        }
+
+        async function loadSeriesList() {
+            const container = document.getElementById('seriesList');
+            container.innerHTML = '';
+
+            try {
+                const allSeries = await FirebaseDB.getAllSeries();
+                const seriesList = Object.entries(allSeries);
+
+                if (seriesList.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.5);">Niciun serial</div>';
+                    return;
+                }
+
+                seriesList.forEach(([id, series]) => {
+                    const item = document.createElement('div');
+                    item.className = 'series-item';
+                    item.onclick = () => selectSeries(id, series);
+
+                    item.innerHTML = `
+                        <div class="series-item-title">
+                            <span>${series.icon || '🎬'}</span>
+                            <span>${series.title}</span>
+                        </div>
+                        <div class="series-item-meta">
+                            ${series.episodes?.length || 0} episoade • ${series.category}
+                        </div>
+                    `;
+
+                    container.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Error loading series:', error);
+                container.innerHTML = '<div style="text-align: center; padding: 20px; color: #ef4444;">Eroare la încărcare</div>';
+            }
+        }
+
+        function selectSeries(id, series) {
+            currentSeriesId = id;
+            currentSeries = series;
+
+            document.querySelectorAll('.series-item').forEach(item => item.classList.remove('active'));
+            event.target.closest('.series-item').classList.add('active');
+
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('episodesContent').style.display = 'block';
+
+            document.getElementById('currentSeriesIcon').textContent = series.icon || '🎬';
+            document.getElementById('currentSeriesTitle').textContent = series.title;
+
+            loadEpisodes();
+        }
+
+        function loadEpisodes() {
+            const tbody = document.getElementById('episodesTableBody');
+            tbody.innerHTML = '';
+
+            if (!currentSeries.episodes || currentSeries.episodes.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">
+                            Niciun episod adăugat încă
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            currentSeries.episodes.forEach((ep, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="episode-number">${index + 1}</span></td>
+                    <td>${ep.title}</td>
+                    <td style="color: rgba(255,255,255,0.7);">${ep.duration}</td>
+                    <td>
+                        <span class="video-badge ${ep.videoUrl ? 'video-available' : 'video-missing'}">
+                            ${ep.videoUrl ? '✅ Disponibil' : '❌ Lipsă'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-small btn-edit" onclick="editEpisode(${index})">
+                                ✏️ Edit
+                            </button>
+                            <button class="btn-small btn-delete" onclick="deleteEpisode(${index})">
+                                🗑️ Șterge
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function openAddModal() {
+            editingIndex = null;
+            document.getElementById('modalTitle').textContent = '➕ Adaugă Episod';
+            document.getElementById('saveBtn').textContent = '💾 Salvează';
+            document.getElementById('episodeForm').reset();
+            document.getElementById('episodeModal').classList.add('show');
+        }
+
+        function editEpisode(index) {
+            editingIndex = index;
+            const episode = currentSeries.episodes[index];
+
+            document.getElementById('modalTitle').textContent = '✏️ Editează Episod';
+            document.getElementById('saveBtn').textContent = '💾 Actualizează';
+            document.getElementById('episodeTitle').value = episode.title;
+            document.getElementById('episodeDuration').value = episode.duration;
+            document.getElementById('episodeDescription').value = episode.description;
+            document.getElementById('episodeVideoUrl').value = episode.videoUrl || '';
+
+            document.getElementById('episodeModal').classList.add('show');
+        }
+
+        async function deleteEpisode(index) {
+            const episode = currentSeries.episodes[index];
+            
+            if (!confirm(`Sigur vrei să ștergi episodul "${episode.title}"?`)) {
+                return;
+            }
+
+            try {
+                currentSeries.episodes.splice(index, 1);
+                await FirebaseDB.saveSeries(currentSeriesId, currentSeries);
+                
+                loadEpisodes();
+                alert('✅ Episod șters cu succes!');
+            } catch (error) {
+                console.error('Error deleting episode:', error);
+                alert('❌ Eroare la ștergere!');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('episodeModal').classList.remove('show');
+            document.getElementById('episodeForm').reset();
+        }
+
+        document.getElementById('episodeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const episodeData = {
+                title: document.getElementById('episodeTitle').value.trim(),
+                duration: document.getElementById('episodeDuration').value.trim(),
+                description: document.getElementById('episodeDescription').value.trim(),
+                videoUrl: document.getElementById('episodeVideoUrl').value.trim()
+            };
+
+            try {
+                if (editingIndex !== null) {
+                    currentSeries.episodes[editingIndex] = episodeData;
+                } else {
+                    if (!currentSeries.episodes) {
+                        currentSeries.episodes = [];
+                    }
+                    currentSeries.episodes.push(episodeData);
+                }
+
+                await FirebaseDB.saveSeries(currentSeriesId, currentSeries);
+                
+                loadEpisodes();
+                closeModal();
+                alert('✅ Salvat cu succes în Firebase!');
+            } catch (error) {
+                console.error('Error saving episode:', error);
+                alert('❌ Eroare la salvare!');
+            }
+        });
+
+        // Close modal on outside click
+        document.getElementById('episodeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>

@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="KDrama Hub - Cele mai bune seriale coreene online">
+    <meta name="description" content="KDrama Hub - Cele mai bune seriale coreene online cu sincronizare cloud">
     <title>K-Drama Hub - Seriale Online</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -13,28 +20,107 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #4A90E2;
+            --primary-dark: #357ABD;
+            --secondary: #667eea;
+            --accent: #f093fb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark-bg: #0a0a0a;
+            --dark-card: #1a1a2e;
+            --light-bg: #f5f7fa;
+            --light-card: #ffffff;
+            --text-light: #ffffff;
+            --text-dark: #1f2937;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            --glow: 0 0 20px rgba(74, 144, 226, 0.5);
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-            color: #fff;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1a2e 100%);
+            color: var(--text-light);
             min-height: 100vh;
-            transition: background 0.3s, color 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: hidden;
         }
 
         body.light-mode {
-            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-            color: #333;
+            background: linear-gradient(135deg, var(--light-bg) 0%, #e5e7eb 100%);
+            color: var(--text-dark);
         }
 
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        .bg-animation span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            animation: float 25s infinite ease-in-out;
+            opacity: 0.1;
+        }
+
+        .bg-animation span:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .bg-animation span:nth-child(2) { left: 20%; animation-delay: 2s; animation-duration: 30s; }
+        .bg-animation span:nth-child(3) { left: 30%; animation-delay: 4s; }
+        .bg-animation span:nth-child(4) { left: 40%; animation-delay: 6s; animation-duration: 28s; }
+        .bg-animation span:nth-child(5) { left: 50%; animation-delay: 8s; }
+        .bg-animation span:nth-child(6) { left: 60%; animation-delay: 10s; animation-duration: 32s; }
+        .bg-animation span:nth-child(7) { left: 70%; animation-delay: 12s; }
+        .bg-animation span:nth-child(8) { left: 80%; animation-delay: 14s; animation-duration: 26s; }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-100vh) rotate(360deg);
+            }
+        }
+
+        /* Header Styles */
         header {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            padding: 16px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             position: sticky;
             top: 0;
             z-index: 1000;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+            border-bottom: 1px solid rgba(74, 144, 226, 0.2);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         body.light-mode header {
@@ -45,72 +131,105 @@
         .header-content {
             max-width: 1600px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 20px;
+            gap: 24px;
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 16px;
             cursor: pointer;
-        }
-
-        .logo {
-            width: 50px;
-            height: 50px;
-            background: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             transition: transform 0.3s ease;
         }
 
-        .logo:hover {
-            transform: rotate(-5deg);
+        .logo-container:hover {
+            transform: scale(1.05);
+        }
+
+        .logo {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .logo:hover::before {
+            transform: translateX(100%);
         }
 
         .logo img {
             width: 100%;
             height: 100%;
             object-fit: contain;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-text {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
         }
 
         .nav-menu {
             display: flex;
-            gap: 30px;
+            gap: 32px;
             align-items: center;
         }
 
         .nav-link {
-            color: #fff;
+            color: var(--text-light);
             text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.3s;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
             position: relative;
+            cursor: pointer;
+            padding: 8px 0;
         }
 
         body.light-mode .nav-link {
-            color: #333;
+            color: var(--text-dark);
         }
 
         .nav-link::after {
             content: '';
             position: absolute;
-            bottom: -5px;
-            left: 0;
+            bottom: 0;
+            left: 50%;
             width: 0;
             height: 2px;
-            background: #4A90E2;
-            transition: width 0.3s;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
         }
 
         .nav-link:hover {
-            color: #4A90E2;
+            color: var(--primary);
+            transform: translateY(-2px);
         }
 
         .nav-link:hover::after {
@@ -120,18 +239,19 @@
         .header-right {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .search-container {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             background: rgba(255, 255, 255, 0.05);
-            padding: 8px 15px;
-            border-radius: 25px;
-            border: 1px solid rgba(100, 150, 255, 0.3);
-            transition: all 0.3s;
+            padding: 10px 18px;
+            border-radius: 50px;
+            border: 2px solid rgba(74, 144, 226, 0.3);
+            transition: all 0.3s ease;
+            min-width: 250px;
         }
 
         body.light-mode .search-container {
@@ -139,171 +259,319 @@
         }
 
         .search-container:focus-within {
-            border-color: #4A90E2;
-            box-shadow: 0 0 15px rgba(74, 144, 226, 0.3);
+            border-color: var(--primary);
+            box-shadow: var(--glow);
+            background: rgba(74, 144, 226, 0.1);
         }
 
         .search-input {
             background: transparent;
             border: none;
-            color: #fff;
+            color: var(--text-light);
             outline: none;
-            width: 200px;
-            font-size: 13px;
+            flex: 1;
+            font-size: 14px;
         }
 
         body.light-mode .search-input {
-            color: #333;
+            color: var(--text-dark);
         }
 
         .search-input::placeholder {
-            color: #888;
+            color: rgba(255, 255, 255, 0.5);
         }
 
-        .search-icon {
-            color: #4A90E2;
-            font-size: 16px;
+        body.light-mode .search-input::placeholder {
+            color: rgba(0, 0, 0, 0.4);
         }
 
-        .theme-toggle, .favorites-btn, .auth-btn {
-            background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(53, 122, 189, 0.2));
-            border: 2px solid #4A90E2;
-            color: #fff;
-            padding: 8px 18px;
-            border-radius: 25px;
+        .btn {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(102, 126, 234, 0.2));
+            border: 2px solid var(--primary);
+            color: var(--text-light);
+            padding: 10px 20px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             font-weight: 600;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 13px;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
         }
 
-        body.light-mode .theme-toggle,
-        body.light-mode .favorites-btn,
-        body.light-mode .auth-btn {
-            color: #333;
+        body.light-mode .btn {
+            color: var(--text-dark);
         }
 
-        .theme-toggle:hover, .favorites-btn:hover, .auth-btn:hover {
-            background: linear-gradient(135deg, #4A90E2, #357ABD);
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: -1;
+        }
+
+        .btn:hover {
+            color: white;
+            border-color: var(--secondary);
+            box-shadow: 0 8px 24px rgba(74, 144, 226, 0.4);
             transform: translateY(-2px);
-            color: #fff;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .favorites-count {
-            background: #ff4444;
+            background: var(--danger);
             color: white;
             border-radius: 50%;
-            padding: 2px 6px;
+            padding: 2px 7px;
             font-size: 11px;
             font-weight: bold;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.5);
         }
 
+        /* Container */
         .container {
             max-width: 1600px;
             margin: 0 auto;
-            padding: 30px 20px;
+            padding: 32px 24px;
         }
 
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(74, 144, 226, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Category Filter */
         .category-filter {
             display: flex;
             gap: 12px;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
             flex-wrap: wrap;
             justify-content: center;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
         }
 
         .filter-btn {
-            background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(53, 122, 189, 0.2));
-            border: 2px solid rgba(74, 144, 226, 0.5);
-            color: #fff;
-            padding: 10px 25px;
-            border-radius: 25px;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.15), rgba(102, 126, 234, 0.15));
+            border: 2px solid rgba(74, 144, 226, 0.3);
+            color: var(--text-light);
+            padding: 12px 28px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 600;
-            font-size: 13px;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
         }
 
         body.light-mode .filter-btn {
-            color: #333;
+            color: var(--text-dark);
         }
 
-        .filter-btn:hover, .filter-btn.active {
-            background: linear-gradient(135deg, #4A90E2, #357ABD);
-            border-color: #4A90E2;
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
-            transform: translateY(-2px);
-            color: #fff;
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.4s ease;
+            z-index: -1;
         }
 
+        .filter-btn:hover,
+        .filter-btn.active {
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.4);
+        }
+
+        .filter-btn:hover::before,
+        .filter-btn.active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Category Section */
         .category-section {
-            margin-bottom: 40px;
+            margin-bottom: 48px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .category-title {
-            font-size: 22px;
-            margin-bottom: 20px;
-            color: #4A90E2;
-            border-left: 4px solid #4A90E2;
-            padding-left: 15px;
-        }
-
-        .series-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 15px;
-        }
-
-        .series-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 28px;
+            margin-bottom: 24px;
+            color: var(--primary);
+            border-left: 5px solid var(--primary);
+            padding-left: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
             position: relative;
         }
 
+        .category-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+        }
+
+        /* Series Grid */
+        .series-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 24px;
+        }
+
+        .series-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
         body.light-mode .series-card {
-            background: white;
+            background: var(--light-card);
             border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .series-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
-            border-color: rgba(74, 144, 226, 0.5);
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(74, 144, 226, 0.4);
+            border-color: var(--primary);
+        }
+
+        .series-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .series-card:hover::after {
+            opacity: 1;
         }
 
         .favorite-icon {
             position: absolute;
-            top: 8px;
-            left: 8px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 6px;
+            top: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 8px;
             border-radius: 50%;
-            font-size: 16px;
+            font-size: 18px;
             cursor: pointer;
             z-index: 10;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
         }
 
         .favorite-icon:hover {
-            transform: scale(1.2);
+            transform: scale(1.3) rotate(10deg);
+            border-color: #ff4444;
+            box-shadow: 0 8px 24px rgba(255, 68, 68, 0.5);
         }
 
         .favorite-icon.favorited {
             color: #ff4444;
+            animation: heartBeat 0.5s ease;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(1.1); }
+            75% { transform: scale(1.4); }
         }
 
         .series-poster {
             width: 100%;
-            height: 200px;
+            height: 260px;
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             display: flex;
             align-items: center;
@@ -316,93 +584,108 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s;
+            transition: transform 0.5s ease;
         }
 
         .series-card:hover .series-poster img {
-            transform: scale(1.1);
+            transform: scale(1.15) rotate(2deg);
         }
 
         .series-rating {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            background: linear-gradient(135deg, #4A90E2, #357ABD);
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 11px;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
             font-weight: bold;
             z-index: 2;
             display: flex;
             align-items: center;
             gap: 4px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         .series-info {
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.3);
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
         }
 
         body.light-mode .series-info {
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.95);
         }
 
         .series-title {
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 4px;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: #fff;
+            color: var(--text-light);
         }
 
         body.light-mode .series-title {
-            color: #333;
+            color: var(--text-dark);
         }
 
-        .series-year {
-            font-size: 11px;
-            color: #aaa;
+        .series-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
         }
 
-        body.light-mode .series-year {
-            color: #666;
+        body.light-mode .series-meta {
+            color: rgba(0, 0, 0, 0.6);
         }
 
         .series-episodes {
-            font-size: 10px;
-            color: #4A90E2;
-            margin-top: 4px;
+            font-size: 11px;
+            color: var(--primary);
+            margin-top: 6px;
+            font-weight: 600;
         }
 
-        .no-results {
-            text-align: center;
-            padding: 60px 20px;
-            color: #888;
-            font-size: 16px;
+        /* Progress Bar on Series Card */
+        .series-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
         }
 
-        .hidden {
-            display: none !important;
+        .series-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.3s ease;
         }
 
+        /* Notification */
         .notification {
             position: fixed;
             top: 100px;
-            right: 20px;
-            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            right: 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 16px 28px;
+            border-radius: 16px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
             z-index: 10000;
-            font-weight: bold;
-            font-size: 14px;
+            font-weight: 600;
+            font-size: 15px;
             opacity: 0;
             transform: translateX(400px);
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
         }
 
         .notification.show {
@@ -410,116 +693,109 @@
             transform: translateX(0);
         }
 
-        .notification.add {
-            background: linear-gradient(135deg, #56ab2f, #a8e063);
+        .notification.success {
+            background: linear-gradient(135deg, var(--success), #059669);
         }
 
-        .notification.remove {
-            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+        .notification.error {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
         }
 
-        footer {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 40px 20px 20px;
-            margin-top: 60px;
-            border-top: 1px solid rgba(100, 150, 255, 0.2);
-        }
-
-        body.light-mode footer {
-            background: rgba(255, 255, 255, 0.95);
-            border-top: 1px solid rgba(74, 144, 226, 0.3);
-        }
-
-        .footer-content {
-            max-width: 1600px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-        }
-
-        .footer-section h3 {
-            color: #4A90E2;
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-
-        .footer-link {
-            color: #aaa;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 10px;
-            font-size: 13px;
-            transition: color 0.3s;
-        }
-
-        body.light-mode .footer-link {
-            color: #666;
-        }
-
-        .footer-link:hover {
-            color: #4A90E2;
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
             .nav-menu {
                 display: none;
             }
-            
-            .search-input {
-                width: 120px;
+
+            .search-container {
+                min-width: 150px;
             }
-            
+
+            .series-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 16px;
+            }
+
+            .series-poster {
+                height: 200px;
+            }
+
             .header-right {
                 flex-wrap: wrap;
                 gap: 8px;
             }
-            
-            .series-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                gap: 12px;
+
+            .category-filter {
+                gap: 8px;
             }
-            
-            .series-poster {
-                height: 160px;
+
+            .filter-btn {
+                padding: 10px 20px;
+                font-size: 13px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header -->
     <header>
         <div class="header-content">
             <div class="logo-container" onclick="window.location.href='index.html'">
                 <div class="logo">
                     <img src="img/logo.png" alt="KDrama Hub">
                 </div>
+                <span class="brand-text">KDrama Hub</span>
             </div>
+            
             <nav class="nav-menu">
-                <a href="index.html" class="nav-link">Acasă</a>
-                <a href="#" class="nav-link" onclick="showAbout()">Despre</a>
-                <a href="#" class="nav-link" onclick="showContact()">Contact</a>
-                <a href="history.html" class="nav-link">Istoric</a>
+                <span class="nav-link" onclick="window.location.href='index.html'">Acasă</span>
+                <span class="nav-link" onclick="window.location.href='history.html'">Istoric</span>
+                <span class="nav-link" onclick="showAbout()">Despre</span>
+                <span class="nav-link" onclick="showContact()">Contact</span>
             </nav>
+            
             <div class="header-right">
                 <div class="search-container">
-                    <span class="search-icon">🔍</span>
+                    <span style="font-size: 18px;">🔍</span>
                     <input type="text" class="search-input" id="searchInput" placeholder="Caută seriale...">
                 </div>
-                <button class="favorites-btn" onclick="showFavorites()">
+                
+                <button class="btn" onclick="showFavorites()" style="position: relative;">
                     ❤️ Favorite
                     <span class="favorites-count" id="favCount">0</span>
                 </button>
-                <button class="auth-btn" id="authBtn" onclick="window.location.href='login.html'">
+                
+                <button class="btn" id="authBtn" onclick="handleAuth()">
                     🔐 Conectare
                 </button>
-                <button class="theme-toggle" onclick="toggleTheme()">
+                
+                <button class="btn" onclick="toggleTheme()">
                     <span id="themeIcon">🌙</span>
                 </button>
             </div>
         </div>
     </header>
 
+    <!-- Main Container -->
     <div class="container">
+        <!-- Category Filter -->
         <div class="category-filter">
             <button class="filter-btn active" data-category="all">🎬 Toate</button>
             <button class="filter-btn" data-category="race">🏎 Race</button>
@@ -530,11 +806,12 @@
             <button class="filter-btn" data-category="fantasy">✨ Fantasy</button>
         </div>
 
+        <!-- Series Sections -->
         <section class="category-section" data-category="race">
             <h2 class="category-title">🏎 Race</h2>
             <div class="series-grid" id="raceGrid"></div>
         </section>
-        
+
         <section class="category-section" data-category="action">
             <h2 class="category-title">⚔️ Action</h2>
             <div class="series-grid" id="actionGrid"></div>
@@ -549,221 +826,69 @@
             <h2 class="category-title">🔍 Thriller</h2>
             <div class="series-grid" id="thrillerGrid"></div>
         </section>
-
-        <div class="no-results hidden" id="noResults">
-            <p>Nu s-au găsit seriale pentru căutarea ta 😔</p>
-        </div>
     </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>K-Drama Hub</h3>
-                <p style="color: #aaa; font-size: 13px; line-height: 1.6;">
-                    Platforma ta preferată pentru seriale coreene. Descoperă, vizionează și evaluează cele mai bune K-Drama-uri.
-                </p>
-            </div>
-            <div class="footer-section">
-                <h3>Link-uri Rapide</h3>
-                <a href="index.html" class="footer-link">Acasă</a>
-                <a href="#" class="footer-link" onclick="showAbout()">Despre Noi</a>
-                <a href="#" class="footer-link" onclick="showContact()">Contact</a>
-                <a href="register.html" class="footer-link">Înregistrare</a>
-                <a href="history.html" class="footer-link">Istoric Vizionări</a>
-            </div>
-            <div class="footer-section">
-                <h3>Categorii</h3>
-                <a href="#" class="footer-link">Action</a>
-                <a href="#" class="footer-link">Romance</a>
-                <a href="#" class="footer-link">Thriller</a>
-                <a href="#" class="footer-link">Race</a>
-            </div>
-            <div class="footer-section">
-                <h3>Legal</h3>
-                <a href="#" class="footer-link">Termeni și Condiții</a>
-                <a href="#" class="footer-link">Politica de Confidențialitate</a>
-                <a href="#" class="footer-link">GDPR</a>
-            </div>
-            <div class="footer-section">
-                <h3>Urmărește-ne</h3>
-                <a href="https://facebook.com" target="_blank" class="footer-link">📘 Facebook</a>
-                <a href="https://youtube.com" target="_blank" class="footer-link">📺 YouTube</a>
-                <a href="https://x.com" target="_blank" class="footer-link">𝕏 Twitter (X)</a>
-                <a href="https://instagram.com" target="_blank" class="footer-link">📷 Instagram</a>
-            </div>
-        </div>
-        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(100, 150, 255, 0.2); color: #888; font-size: 12px;">
-            © 2025 K-Drama Hub. All rights reserved. Made with ❤️ for K-Drama fans.
-        </div>
-    </footer>
-
+    <!-- Scripts -->
+    <script src="firebase-config.js"></script>
     <script src="data.js"></script>
     <script>
-        let isLoggedIn = localStorage.getItem('kdrama_logged_in') === 'true';
-        let currentUser = localStorage.getItem('kdrama_user') || null;
+        // Global State
+        let currentUser = null;
         let favorites = [];
+        let watchProgress = {};
 
-        function loadFavorites() {
-            if (isLoggedIn && currentUser) {
-                favorites = JSON.parse(localStorage.getItem(`kdrama_favorites_${currentUser}`) || '[]');
-            } else {
-                favorites = JSON.parse(localStorage.getItem('kdrama_favorites_guest') || '[]');
-            }
-        }
-
-        function saveFavorites() {
-            if (isLoggedIn && currentUser) {
-                localStorage.setItem(`kdrama_favorites_${currentUser}`, JSON.stringify(favorites));
-            } else {
-                localStorage.setItem('kdrama_favorites_guest', JSON.stringify(favorites));
-            }
-        }
-
-        loadFavorites();
-        updateFavCount();
-        updateAuthButton();
-
-        const savedTheme = localStorage.getItem('kdrama_theme') || 'dark';
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-mode');
-            document.getElementById('themeIcon').textContent = '☀️';
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            document.getElementById('themeIcon').textContent = isLight ? '☀️' : '🌙';
-            localStorage.setItem('kdrama_theme', isLight ? 'light' : 'dark');
-        }
-
-        function toggleFavorite(seriesId, event) {
-            event.stopPropagation();
-            const index = favorites.indexOf(seriesId);
-            const series = seriesData[seriesId];
+        // Initialize
+        async function init() {
+            showLoading(true);
             
-            if (index > -1) {
-                favorites.splice(index, 1);
-                showNotification(`❌ "${series.title}" a fost șters din favorite!`, 'remove');
-            } else {
-                favorites.push(seriesId);
-                showNotification(`❤️ "${series.title}" a fost adăugat la favorite!`, 'add');
-            }
-            saveFavorites();
-            updateFavCount();
-            renderAllSeries();
-        }
-
-        function showNotification(message, type) {
-            const existingNotif = document.querySelector('.notification');
-            if (existingNotif) existingNotif.remove();
-
-            const notification = document.createElement('div');
-            notification.className = 'notification ' + type;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-
-            setTimeout(() => notification.classList.add('show'), 10);
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-
-        function updateFavCount() {
-            document.getElementById('favCount').textContent = favorites.length;
-        }
-
-        function updateAuthButton() {
-            const btn = document.getElementById('authBtn');
-            if (isLoggedIn) {
-                btn.textContent = `👤 ${currentUser}`;
-                btn.onclick = showUserMenu;
-            } else {
-                btn.innerHTML = '🔐 Conectare';
-                btn.onclick = () => window.location.href = 'login.html';
-            }
-        }
-
-        function showUserMenu() {
-            const userRole = localStorage.getItem('kdrama_user_role') || 'user';
-            let menu = `Bine ai venit, ${currentUser}!\n\n`;
-            menu += `1. Profilul meu\n`;
-            menu += `2. Serialele mele favorite (${favorites.length})\n`;
-            menu += `3. Istoric vizionări\n`;
-            if (userRole === 'admin') {
-                menu += `4. Panou Admin\n`;
-            }
-            menu += `\n${userRole === 'admin' ? '5' : '4'}. Deconectare\n`;
-            
-            const choice = prompt(menu + '\nAlege o opțiune:');
-            
-            if (choice === '1') {
-                alert(`📊 Profil:\n\nUtilizator: ${currentUser}\nRol: ${userRole}\nSeriale favorite: ${favorites.length}\nMembru din: ${new Date().toLocaleDateString('ro-RO')}`);
-            } else if (choice === '2') {
-                showFavorites();
-            } else if (choice === '3') {
-                window.location.href = 'history.html';
-            } else if (choice === '4') {
-                if (userRole === 'admin') {
-                    window.location.href = 'admin.html';
-                } else {
-                    logout();
+            // Check auth state
+            FirebaseAuth.onAuthStateChanged(async (user) => {
+                currentUser = user;
+                updateAuthUI();
+                
+                if (user) {
+                    await loadUserData();
                 }
-            } else if (choice === '5' && userRole === 'admin') {
-                logout();
-            }
-        }
-
-        function logout() {
-            if (confirm('Sigur vrei să te deconectezi?')) {
-                isLoggedIn = false;
-                currentUser = null;
-                localStorage.removeItem('kdrama_logged_in');
-                localStorage.removeItem('kdrama_user');
-                localStorage.removeItem('kdrama_user_role');
                 
-                loadFavorites();
-                
-                updateAuthButton();
-                showNotification('👋 Te-ai deconectat cu succes!', 'remove');
-                
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
-            }
-        }
-
-        function showAbout() {
-            alert('K-Drama Hub - Platforma ta preferată pentru seriale coreene!\n\nDescoperă și vizionezi cele mai populare K-Drama-uri, salvează-ți favoritele și lasă comentarii.\n\nVersiunea: 2.0\nCopyright © 2025');
-        }
-
-        function showContact() {
-            alert('Contact:\n\n📧 Email: contact@kdramahub.ro\n📱 Telefon: +40 XXX XXX XXX\n🌐 Website: www.kdramahub.ro\n\nProgramul de asistență: Luni-Vineri 9:00-18:00');
-        }
-
-        function showFavorites() {
-            if (favorites.length === 0) {
-                alert('Nu ai seriale favorite încă!');
-                return;
-            }
-            
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            filterBtns.forEach(btn => btn.classList.remove('active'));
-            
-            document.querySelectorAll('.series-card').forEach(card => {
-                const seriesId = card.getAttribute('data-series-id');
-                card.classList.toggle('hidden', !favorites.includes(seriesId));
+                await loadSeries();
+                showLoading(false);
             });
 
-            document.querySelectorAll('.category-section').forEach(section => {
-                const visibleCards = section.querySelectorAll('.series-card:not(.hidden)');
-                section.classList.toggle('hidden', visibleCards.length === 0);
-            });
+            // Theme
+            const savedTheme = localStorage.getItem('kdrama_theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                document.getElementById('themeIcon').textContent = '☀️';
+            }
 
-            document.getElementById('noResults').classList.add('hidden');
+            // Event Listeners
+            setupEventListeners();
         }
 
-        function renderAllSeries() {
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').classList.toggle('show', show);
+        }
+
+        async function loadUserData() {
+            try {
+                favorites = await FirebaseDB.getFavorites(currentUser.uid);
+                watchProgress = await FirebaseDB.getProgress(currentUser.uid);
+                updateFavCount();
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        async function loadSeries() {
+            const allSeries = await FirebaseDB.getAllSeries();
+            
+            // Merge with local data if Firebase is empty
+            const mergedData = Object.keys(allSeries).length > 0 ? allSeries : seriesData;
+            
+            renderSeries(mergedData);
+        }
+
+        function renderSeries(data) {
             const grids = {
                 action: document.getElementById('actionGrid'),
                 romance: document.getElementById('romanceGrid'),
@@ -773,24 +898,32 @@
 
             Object.values(grids).forEach(grid => grid.innerHTML = '');
 
-            Object.entries(seriesData).forEach(([id, series]) => {
+            Object.entries(data).forEach(([id, series]) => {
                 const isFavorited = favorites.includes(id);
-                const imageSrc = series.image || 'img/placeholder.jpg';
-                
+                const progress = watchProgress[id];
+                const progressPercent = progress ? (progress.episodeNumber / series.episodes.length * 100) : 0;
+
                 const card = `
-                    <div class="series-card" onclick="window.location.href='series.html?id=${id}'" data-series-id="${id}" data-title="${series.title.toLowerCase()}">
-                        <div class="favorite-icon ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite('${id}', event)">
+                    <div class="series-card" onclick="goToSeries('${id}')" data-series-id="${id}">
+                        <div class="favorite-icon ${isFavorited ? 'favorited' : ''}" onclick="event.stopPropagation(); toggleFavorite('${id}')">
                             ${isFavorited ? '❤️' : '🤍'}
                         </div>
                         <div class="series-poster">
-                            <img src="${imageSrc}" alt="${series.title}" onerror="this.parentElement.innerHTML='<span style=\\'font-size:40px\\'>${series.icon || '🎬'}</span><div class=\\'series-rating\\' style=\\'position:absolute; top:8px; right:8px; z-index:2;\\'>⭐ ${series.rating}</div>'">
+                            ${series.image ? `<img src="${series.image}" alt="${series.title}">` : `<span style="font-size: 60px;">${series.icon || '🎬'}</span>`}
                             <div class="series-rating">⭐ ${series.rating}</div>
                         </div>
                         <div class="series-info">
                             <div class="series-title">${series.title}</div>
-                            <div class="series-year">${series.year}</div>
-                            <div class="series-episodes">${series.episodes.length} episoade</div>
+                            <div class="series-meta">
+                                <span>${series.year}</span>
+                                <span>${series.episodes.length} ep</span>
+                            </div>
                         </div>
+                        ${progressPercent > 0 ? `
+                            <div class="series-progress">
+                                <div class="series-progress-bar" style="width: ${progressPercent}%"></div>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
 
@@ -800,45 +933,147 @@
             });
         }
 
-        renderAllSeries();
+        async function toggleFavorite(seriesId) {
+            if (!currentUser) {
+                showNotification('🔐 Conectează-te pentru a salva favorite!', 'error');
+                return;
+            }
 
-        const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase().trim();
-            let hasResults = false;
+            const index = favorites.indexOf(seriesId);
+            
+            if (index > -1) {
+                favorites.splice(index, 1);
+                showNotification('Șters din favorite!', 'error');
+            } else {
+                favorites.push(seriesId);
+                showNotification('Adăugat la favorite!', 'success');
+            }
+
+            await FirebaseDB.saveFavorites(currentUser.uid, favorites);
+            updateFavCount();
+            await loadSeries();
+        }
+
+        function updateFavCount() {
+            document.getElementById('favCount').textContent = favorites.length;
+        }
+
+        function updateAuthUI() {
+            const btn = document.getElementById('authBtn');
+            if (currentUser) {
+                btn.innerHTML = `👤 ${currentUser.displayName || currentUser.email}`;
+                btn.onclick = showUserMenu;
+            } else {
+                btn.innerHTML = '🔐 Conectare';
+                btn.onclick = () => window.location.href = 'login.html';
+            }
+        }
+
+        function handleAuth() {
+            if (currentUser) {
+                showUserMenu();
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        function goToSeries(id) {
+            window.location.href = `series.html?id=${id}`;
+        }
+
+        function showFavorites() {
+            if (favorites.length === 0) {
+                showNotification('Nu ai seriale favorite!', 'error');
+                return;
+            }
 
             document.querySelectorAll('.series-card').forEach(card => {
-                const title = card.getAttribute('data-title') || '';
-                const matches = title.includes(searchTerm);
-                card.classList.toggle('hidden', !matches);
-                if (matches) hasResults = true;
+                const id = card.getAttribute('data-series-id');
+                card.style.display = favorites.includes(id) ? 'block' : 'none';
             });
 
-            document.querySelectorAll('.category-section').forEach(section => {
-                const visibleCards = section.querySelectorAll('.series-card:not(.hidden)');
-                section.classList.toggle('hidden', visibleCards.length === 0);
-            });
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        }
 
-            document.getElementById('noResults').classList.toggle('hidden', hasResults || searchTerm === '');
-        });
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            document.getElementById('themeIcon').textContent = isLight ? '☀️' : '🌙';
+            localStorage.setItem('kdrama_theme', isLight ? 'light' : 'dark');
+        }
 
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+        function showNotification(message, type) {
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.textContent = message;
+            document.body.appendChild(notif);
 
-                const category = btn.getAttribute('data-category');
-                
-                document.querySelectorAll('.category-section').forEach(section => {
-                    section.classList.toggle('hidden', category !== 'all' && section.getAttribute('data-category') !== category);
+            setTimeout(() => notif.classList.add('show'), 10);
+            setTimeout(() => {
+                notif.classList.remove('show');
+                setTimeout(() => notif.remove(), 400);
+            }, 3000);
+        }
+
+        function setupEventListeners() {
+            // Search
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.series-card').forEach(card => {
+                    const title = card.querySelector('.series-title').textContent.toLowerCase();
+                    card.style.display = title.includes(term) ? 'block' : 'none';
                 });
-
-                searchInput.value = '';
-                document.querySelectorAll('.series-card').forEach(card => card.classList.remove('hidden'));
-                document.getElementById('noResults').classList.add('hidden');
             });
-        });
+
+            // Category Filter
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const category = this.getAttribute('data-category');
+                    
+                    document.querySelectorAll('.category-section').forEach(section => {
+                        section.style.display = (category === 'all' || section.getAttribute('data-category') === category) ? 'block' : 'none';
+                    });
+
+                    document.querySelectorAll('.series-card').forEach(card => card.style.display = 'block');
+                    document.getElementById('searchInput').value = '';
+                });
+            });
+        }
+
+        function showUserMenu() {
+            const menu = confirm(`👤 ${currentUser.displayName || currentUser.email}\n\n1. Profil\n2. Istoric\n3. Favorite\n4. Deconectare\n\nAlege o opțiune (da pentru istoric, nu pentru deconectare):`);
+            
+            if (menu) {
+                window.location.href = 'history.html';
+            } else {
+                logout();
+            }
+        }
+
+        async function logout() {
+            if (confirm('Sigur vrei să te deconectezi?')) {
+                await FirebaseAuth.signOut();
+                favorites = [];
+                watchProgress = {};
+                updateFavCount();
+                showNotification('Deconectat cu succes!', 'success');
+                setTimeout(() => window.location.reload(), 1500);
+            }
+        }
+
+        function showAbout() {
+            alert('🎬 KDrama Hub\n\nPlatforma modernă pentru seriale coreene!\n\n✨ Sincronizare cloud\n❤️ Favorite salvate\n📊 Urmărire progres\n🎨 Design modern\n\nVersiunea 4.0 - 2025');
+        }
+
+        function showContact() {
+            alert('📞 Contact\n\n📧 Email: contact@kdramahub.ro\n🌐 Web: www.kdramahub.ro\n📱 Support 24/7');
+        }
+
+        // Start App
+        init();
     </script>
 </body>
 </html>
